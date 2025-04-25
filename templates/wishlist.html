@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+{% block title %}Wishlist - Kokani Bazaar{% endblock %}
+{% block content %}
+<div class="py-12">
+    <div class="container mx-auto px-4">
+        <h1 class="text-3xl font-bold mb-8">Your Wishlist</h1>
+        
+        {% if products %}
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {% for product in products %}
+            <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                <a href="{{ url_for('product_detail', id=product.id) }}" class="block relative">
+                    <div class="h-48 overflow-hidden">
+                        <img 
+                            src="{{ product.image }}" 
+                            alt="{{ product.name }}" 
+                            class="w-full h-full object-cover transition-transform duration-300"
+                        >
+                    </div>
+                    {% if product.stock <= 5 and product.stock > 0 %}
+                    <div class="absolute top-2 right-2 bg-orange-500 text-white text-xs font-medium px-2 py-1 rounded">
+                        Limited
+                    </div>
+                    {% elif product.stock == 0 %}
+                    <div class="absolute top-2 right-2 bg-gray-500 text-white text-xs font-medium px-2 py-1 rounded">
+                        Sold Out
+                    </div>
+                    {% endif %}
+                </a>
+                <div class="p-4">
+                    <div class="mb-2 flex items-center text-yellow-400">
+                        {% for i in range(5) %}
+                            {% if i < product.rating|int %}
+                                <i data-lucide="star" class="fill-current h-4 w-4"></i>
+                            {% elif product.rating - i >= 0.5 %}
+                                <i data-lucide="star-half" class="fill-current h-4 w-4"></i>
+                            {% else %}
+                                <i data-lucide="star" class="h-4 w-4"></i>
+                            {% endif %}
+                        {% endfor %}
+                        <span class="text-xs text-gray-500 ml-1">({{ product.rating }})</span>
+                    </div>
+                    <a href="{{ url_for('product_detail', id=product.id) }}" class="block">
+                        <h3 class="font-medium text-gray-900 mb-1">{{ product.name }}</h3>
+                    </a>
+                    <div class="flex items-center justify-between mt-4">
+                        <div>
+                            <span class="font-medium text-garden-600">₹{{ "%.2f"|format(product.price) }}</span>
+                            {% if product.original_price and product.original_price > product.price %}
+                            <span class="text-sm text-gray-500 line-through ml-2">₹{{ "%.2f"|format(product.original_price) }}</span>
+                            {% endif %}
+                        </div>
+                        <form action="{{ url_for('add_to_cart', product_id=product.id) }}" method="POST" class="inline">
+                            {{ form.hidden_tag() }}
+                            <button type="submit" class="bg-garden-600 hover:bg-garden-700 text-white px-4 py-2 rounded-md font-medium flex items-center">
+                                <i data-lucide="shopping-cart" class="h-4 w-4 mr-2"></i>
+                                Add to Cart
+                            </button>
+                        </form>
+                    </div>
+                    <form action="{{ url_for('remove_from_wishlist', product_id=product.id) }}" method="POST" class="mt-4">
+                        {{ form.hidden_tag() }}
+                        <button type="submit" class="text-red-500 hover:text-red-700 flex items-center w-full">
+                            <i data-lucide="trash-2" class="h-4 w-4 mr-2"></i>
+                            Remove from Wishlist
+                        </button>
+                    </form>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="bg-white rounded-lg shadow-md p-8 text-center">
+            <div class="flex justify-center mb-4">
+                <i data-lucide="heart" class="h-16 w-16 text-gray-300"></i>
+            </div>
+            <h2 class="text-2xl font-semibold mb-2">Your wishlist is empty</h2>
+            <p class="text-gray-600 mb-6">Save your favorite products for later.</p>
+            <a href="{{ url_for('shop') }}" class="bg-garden-600 hover:bg-garden-700 text-white px-6 py-3 rounded-md font-medium inline-block">
+                Start Shopping
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

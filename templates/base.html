@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Kokani Bazaar{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="flex flex-col min-h-screen bg-gray-50">
+    <!-- Header -->
+    <header class="bg-white shadow-sm">
+        <div class="container mx-auto px-4">
+            <div class="flex items-center justify-between py-4">
+                <!-- Logo -->
+                <a href="{{ url_for('index') }}" class="flex items-center">
+                    <span class="text-2xl font-bold text-garden-600">Kokani Bazaar</span>
+                </a>
+
+                <!-- Search Form (Desktop) -->
+                <form action="{{ url_for('shop') }}" method="get" class="hidden md:flex flex-grow max-w-md mx-4">
+                    <div class="relative w-full">
+                        <input
+                            type="search"
+                            name="search"
+                            placeholder="Search products..."
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-garden-500"
+                        >
+                        <button type="submit" class="absolute right-2 top-1/2 transform -translate-y-1/2">
+                            <i data-lucide="search" class="h-5 w-5 text-gray-400"></i>
+                        </button>
+                    </div>
+                </form>
+
+                <!-- Navigation -->
+                <nav class="flex items-center space-x-4 md:space-x-6"> <!-- Adjusted spacing -->
+                    <a href="{{ url_for('shop') }}" class="hidden md:block text-gray-600 hover:text-garden-600">Shop</a>
+                    <a href="{{ url_for('categories') }}" class="hidden md:block text-gray-600 hover:text-garden-600">Categories</a>
+
+                    <!-- Cart Icon -->
+                    <a href="{{ url_for('cart') }}" class="relative text-gray-600 hover:text-garden-600">
+                        <i data-lucide="shopping-cart" class="h-6 w-6"></i>
+                        <span class="absolute -top-1 -right-1 bg-garden-600 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center">0</span> <!-- TODO: Dynamic cart count -->
+                    </a>
+
+                    <!-- User Menu / Login Icon -->
+                    {% if session.get('user_id') %}
+                        <div class="relative"><!-- User Menu for logged-in users - Visible on all screens -->
+                            <button id="user-menu-button" class="flex items-center text-gray-600 hover:text-garden-600">
+                                <span class="mr-1">{{ session.get('user_name') }}</span>
+                                <i data-lucide="chevron-down" class="h-4 w-4"></i>
+                            </button>
+                            <div id="user-menu-dropdown" class="absolute right-0 z-10 mt-2 w-48 bg-white rounded-md shadow-lg py-1 hidden">
+                                <a href="{{ url_for('account') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">My Account</a>
+                                <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">My Orders</a>
+                                <a href="{{ url_for('logout') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Logout</a>
+                            </div>
+                        </div>
+                    {% else %}
+                        <a href="{{ url_for('login') }}" class="text-gray-600 hover:text-garden-600"> <!-- Login Icon for logged-out users - Visible on all screens -->
+                            <i data-lucide="user" class="h-6 w-6"></i>
+                        </a>
+                    {% endif %} 
+
+                    <!-- Mobile Menu Button (Hidden on Medium screens and up) -->
+                    <button id="mobile-menu-button" class="text-gray-600 hover:text-garden-600">
+                    {% if session.get('user_id') %}
+                        <div class="relative"><!-- User Menu for logged-in users - Visible on all screens -->
+                            <button id="user-menu-button" class="flex items-center text-gray-600 hover:text-garden-600">
+                                <span class="mr-1">{{ session.get('user_name') }}</span>
+                                <i data-lucide="chevron-down" class="h-4 w-4"></i>
+                            </button>
+                            <div id="user-menu-dropdown" class="absolute right-0 z-10 mt-2 w-48 bg-white rounded-md shadow-lg py-1 hidden">
+                                <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">My Account</a>
+                                <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">My Orders</a>
+                                <a href="{{ url_for('logout') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Logout</a>
+                            </div>
+                        </div>
+                    {% else %}
+                        <i data-lucide="menu" class="h-6 w-6"></i>
+                    </button>
+                    {% endif %}
+
+                </nav> <!-- End of main navigation -->
+            </div> <!-- End of flex container -->
+
+            <!-- Mobile Search -->
+            <div class="pb-4 md:hidden">
+                <form action="{{ url_for('shop') }}" method="get">
+                    <div class="relative">
+                        <input
+                            type="search"
+                            name="search"
+                            placeholder="Search products..."
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-garden-500"
+                        >
+                        <button type="submit" class="absolute right-2 top-1/2 transform -translate-y-1/2">
+                            <i data-lucide="search" class="h-5 w-5 text-gray-400"></i>
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Mobile Menu -->
+            <div id="mobile-menu" class="hidden md:hidden pb-4">
+                <div class="flex flex-col space-y-2">
+                    <a href="{{ url_for('shop') }}" class="text-gray-600 hover:text-garden-600 py-2">Shop</a>
+                    <a href="{{ url_for('categories') }}" class="text-gray-600 hover:text-garden-600 py-2">Categories</a>
+                    {% if session.get('user_id') %}
+                        <a href="{{ url_for('account') }}" class="text-gray-600 hover:text-garden-600 py-2">My Account</a>
+                        <a href="#" class="text-gray-600 hover:text-garden-600 py-2">My Orders</a>
+                        <a href="{{ url_for('logout') }}" class="text-gray-600 hover:text-garden-600 py-2">Logout</a>
+                    {% else %}
+                        <a href="{{ url_for('login') }}" class="text-gray-600 hover:text-garden-600 py-2">Login</a>
+                        <a href="{{ url_for('register') }}" class="text-gray-600 hover:text-garden-600 py-2">Register</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div> <!-- End of container -->
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-grow">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-garden-800 text-white">
+        <div class="container mx-auto px-4 py-10">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <h3 class="text-xl font-semibold mb-4">Kokani Bazaar</h3>
+                    <p class="text-gray-300 mb-4">
+                        Bringing the freshest organic produce directly from the kokan to your home.
+                    </p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-300 hover:text-white"><i data-lucide="facebook" class="h-5 w-5"></i></a>
+                        <a href="#" class="text-gray-300 hover:text-white"><i data-lucide="instagram" class="h-5 w-5"></i></a>
+                        <a href="#" class="text-gray-300 hover:text-white"><i data-lucide="twitter" class="h-5 w-5"></i></a>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Quick Links</h3>
+                    <ul class="space-y-2">
+                        <li><a href="{{ url_for('index') }}" class="text-gray-300 hover:text-white">Home</a></li>
+                        <li><a href="{{ url_for('shop') }}" class="text-gray-300 hover:text-white">Shop</a></li>
+                        <li><a href="{{ url_for('categories') }}" class="text-gray-300 hover:text-white">Categories</a></li>
+                        <li><a href="#" class="text-gray-300 hover:text-white">About Us</a></li>
+                        <li><a href="#" class="text-gray-300 hover:text-white">Contact</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Customer Service</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-300 hover:text-white">FAQ</a></li>
+                        <li><a href="#" class="text-gray-300 hover:text-white">Shipping Policy</a></li>
+                        <li><a href="#" class="text-gray-300 hover:text-white">Returns & Refunds</a></li>
+                        <li><a href="#" class="text-gray-300 hover:text-white">Privacy Policy</a></li>
+                        <li><a href="#" class="text-gray-300 hover:text-white">Terms of Service</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Contact Us</h3>
+                    <ul class="space-y-2 text-gray-300">
+                        <li class="flex items-start">
+                            <i data-lucide="map-pin" class="h-5 w-5 mr-2 mt-0.5"></i>
+                            <span>Moregaon,Nallasopara,maharashtra,india</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i data-lucide="phone" class="h-5 w-5 mr-2"></i>
+                            <span>8208463990</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i data-lucide="mail" class="h-5 w-5 mr-2"></i>
+                            <span>dhuri8973@gmail.com</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="border-t border-garden-700 mt-10 pt-6 text-center text-gray-300">
+                <p>&copy; 2025 Kokani Bazaar. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Single Script block -->
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+
+        // Mobile menu toggle
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+        mobileMenuButton?.addEventListener('click', function() {
+            mobileMenu?.classList.toggle('hidden');
+        });
+
+        // --- User Dropdown Toggle ---
+        const userMenuButton = document.getElementById('user-menu-button');
+        const userMenuDropdown = document.getElementById('user-menu-dropdown');
+
+        // Check if the button exists before adding listener (for logged-in state)
+        if (userMenuButton) {
+            userMenuButton.addEventListener('click', function(event) {
+                event.stopPropagation(); // Prevent click from immediately closing menu
+                userMenuDropdown?.classList.toggle('hidden');
+            });
+        }
+
+        // Optional: Close dropdown if clicking outside
+        document.addEventListener('click', function(event) {
+            // Check if dropdown exists and is visible
+            if (userMenuDropdown && !userMenuDropdown.classList.contains('hidden')) {
+                // Check if the click was outside the button AND outside the dropdown
+                if (!userMenuButton?.contains(event.target) && !userMenuDropdown.contains(event.target)) {
+                    userMenuDropdown.classList.add('hidden');
+                }
+            }
+        });
+        // --- End of User Dropdown Code ---
+    </script>
+
+    {% block scripts %}{% endblock %}
+</body>
+</html>
+

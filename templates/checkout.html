@@ -1,0 +1,187 @@
+{% extends 'base.html' %}
+{% block title %}Checkout - Kokani Bazaar{% endblock %}
+{% block content %}
+    <div class="py-12">
+        <div class="container mx-auto px-4">
+            <h1 class="text-3xl font-bold mb-8">Checkout</h1>
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                <!-- Checkout Form -->
+                <div class="lg:col-span-8">
+                    <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                        <form method="POST" action="{{ url_for('process_payment') }}">
+                            {{ form.hidden_tag() }}  <!-- CSRF Protection -->
+
+                            <!-- Shipping Information -->
+                            <h2 class="text-xl font-semibold mb-4">Shipping Information</h2>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                                <!-- First Name -->
+                                <div>
+                                    {{ form.first_name.label(class="block text-sm font-medium text-gray-700 mb-1") }}
+                                    {{ form.first_name(class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-garden-500 focus:border-garden-500" + (' is-invalid' if form.first_name.errors else '')) }}
+                                    {% if form.first_name.errors %}
+                                        <div class="text-red-500 text-sm mt-1">{{ form.first_name.errors[0] }}</div>
+                                    {% endif %}
+                                </div>
+                                <!-- Last Name -->
+                                <div>
+                                    {{ form.last_name.label(class="block text-sm font-medium text-gray-700 mb-1") }}
+                                    {{ form.last_name(class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-garden-500 focus:border-garden-500" + (' is-invalid' if form.last_name.errors else '')) }}
+                                    {% if form.last_name.errors %}
+                                        <div class="text-red-500 text-sm mt-1">{{ form.last_name.errors[0] }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <!-- Email -->
+                            <div class="mb-4">
+                                {{ form.email.label(class="block text-sm font-medium text-gray-700 mb-1") }}
+                                {{ form.email(class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-garden-500 focus:border-garden-500" + (' is-invalid' if form.email.errors else '')) }}
+                                {% if form.email.errors %}
+                                    <div class="text-red-500 text-sm mt-1">{{ form.email.errors[0] }}</div>
+                                {% endif %}
+                            </div>
+
+                            <!-- Phone -->
+                            <div class="mb-4">
+                                {{ form.phone.label(class="block text-sm font-medium text-gray-700 mb-1") }}
+                                {{ form.phone(class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-garden-500 focus:border-garden-500" + (' is-invalid' if form.phone.errors else '')) }}
+                                {% if form.phone.errors %}
+                                    <div class="text-red-500 text-sm mt-1">{{ form.phone.errors[0] }}</div>
+                                {% endif %}
+                            </div>
+
+                            <!-- Address -->
+                            <div class="mb-4">
+                                {{ form.address.label(class="block text-sm font-medium text-gray-700 mb-1") }}
+                                {{ form.address(class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-garden-500 focus:border-garden-500" + (' is-invalid' if form.address.errors else '')) }}
+                                {% if form.address.errors %}
+                                    <div class="text-red-500 text-sm mt-1">{{ form.address.errors[0] }}</div>
+                                {% endif %}
+                            </div>
+
+                            <!-- City/State/ZIP -->
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                                <div>
+                                    {{ form.city.label(class="block text-sm font-medium text-gray-700 mb-1") }}
+                                    {{ form.city(class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-garden-500 focus:border-garden-500" + (' is-invalid' if form.city.errors else '')) }}
+                                    {% if form.city.errors %}
+                                        <div class="text-red-500 text-sm mt-1">{{ form.city.errors[0] }}</div>
+                                    {% endif %}
+                                </div>
+                                <div>
+                                    {{ form.state.label(class="block text-sm font-medium text-gray-700 mb-1") }}
+                                    {{ form.state(class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-garden-500 focus:border-garden-500" + (' is-invalid' if form.state.errors else '')) }}
+                                    {% if form.state.errors %}
+                                        <div class="text-red-500 text-sm mt-1">{{ form.state.errors[0] }}</div>
+                                    {% endif %}
+                                </div>
+                                <div>
+                                    {{ form.zip.label(class="block text-sm font-medium text-gray-700 mb-1") }}
+                                    {{ form.zip(class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-garden-500 focus:border-garden-500" + (' is-invalid' if form.zip.errors else '')) }}
+                                    {% if form.zip.errors %}
+                                        <div class="text-red-500 text-sm mt-1">{{ form.zip.errors[0] }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <!-- Country -->
+                            <div class="mb-4">
+                                {{ form.country.label(class="block text-sm font-medium text-gray-700 mb-1") }}
+                                {{ form.country(class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-garden-500 focus:border-garden-500" + (' is-invalid' if form.country.errors else '')) }}
+                                {% if form.country.errors %}
+                                    <div class="text-red-500 text-sm mt-1">{{ form.country.errors[0] }}</div>
+                                {% endif %}
+                            </div>
+
+                            <!-- Payment Method (CRITICAL FIX) -->
+                            <div class="mb-4">
+                                <h2 class="text-xl font-semibold mb-4">Payment Method</h2>
+                                <div class="space-y-4">
+                                    {% for subfield in form.payment_method %}
+                                    <div class="flex items-center">
+                                        {{ subfield(class="h-4 w-4 text-garden-600 focus:ring-garden-500 border-gray-300") }}
+                                        {{ subfield.label(class="ml-3 block text-sm font-medium text-gray-700") }}
+                                    </div>
+                                    {% endfor %}
+                                    {% if form.payment_method.errors %}
+                                        <div class="text-red-500 text-sm mt-1">{{ form.payment_method.errors[0] }}</div>
+                                    {% endif %}
+                                    
+                                    <!-- UPI Scanner Container -->
+                                    <div id="upi-scanner" class="hidden mt-4">
+                                        <img src="{{ url_for('static', filename='images/upi_qr.png') }}" 
+                                             alt="UPI QR Code" 
+                                             class="w-64 h-64 mx-auto border border-gray-200 rounded-lg">
+                                        <p class="text-center text-sm text-gray-600 mt-2">
+                                            Scan this code with your UPI app
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Order Notes -->
+                            <div class="mb-4">
+                                {{ form.notes.label(class="block text-sm font-medium text-gray-700 mb-1") }}
+                                {{ form.notes(class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-garden-500 focus:border-garden-500" + (' is-invalid' if form.notes.errors else '')) }}
+                                {% if form.notes.errors %}
+                                    <div class="text-red-500 text-sm mt-1">{{ form.notes.errors[0] }}</div>
+                                {% endif %}
+                            </div>
+
+                            <!-- Submit Button -->
+                            <div class="mt-6">
+                                {{ form.submit(class="w-full bg-garden-600 text-white py-3 px-6 rounded-md hover:bg-garden-700 focus:outline-none focus:ring-2 focus:ring-garden-500") }}
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Order Summary -->
+                <div class="lg:col-span-4">
+                    <div class="bg-white rounded-lg shadow-md p-6 sticky top-20">
+                        <h2 class="text-xl font-semibold mb-4">Order Summary</h2>
+                        <div class="border-b pb-4 mb-4">
+                            {% for product in products %}
+                                <div class="flex justify-between mb-2">
+                                    <span class="text-gray-600">{{ product.name }} × {{ session['cart'][product.id|string] }}</span>
+                                    <span>₹{{ "%.2f"|format(product.price * session['cart'][product.id|string]) }}</span>
+                                </div>
+                            {% endfor %}
+                        </div>
+                        <div class="space-y-3 mb-6">
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Subtotal</span>
+                                <span>₹{{ "%.2f"|format(products|sum(attribute='total')) }}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Shipping</span>
+                                <span class="text-garden-600">Free</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Tax</span>
+                                <span>₹5.00</span>
+                            </div>
+                            <div class="border-t pt-3 mt-3">
+                                <div class="flex justify-between font-semibold">
+                                    <span>Total</span>
+                                    <span>₹{{ "%.2f"|format(products|sum(attribute='total') + 5) }}</span>
+                                </div>
+                                <span class="text-gray-500 text-sm">Including VAT</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript for UPI scanner toggle -->
+    <script>
+        document.querySelectorAll('input[name="payment_method"]').forEach(radio => {
+            radio.addEventListener('change', function() {
+                const upiContainer = document.getElementById('upi-scanner');
+                upiContainer.style.display = (this.value === 'upi') ? 'block' : 'none';
+            });
+        });
+    </script>
+{% endblock %}

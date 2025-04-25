@@ -1,0 +1,19 @@
+
+{% extends 'base.html' %}
+
+{% block title %}Server Error - Kokani Bazaar{% endblock %}
+
+{% block content %}
+<div class="error-page">
+    <div class="container mx-auto px-4">
+        <div class="text-center">
+            <div class="error-code">500</div>
+            <h1 class="text-3xl md:text-4xl font-bold mb-4">Server Error</h1>
+            <p class="text-gray-600 mb-8 max-w-md mx-auto">Something went wrong on our servers. We're working to fix the issue as soon as possible.</p>
+            <a href="{{ url_for('index') }}" class="bg-garden-600 hover:bg-garden-700 text-white px-6 py-3 rounded-md font-medium inline-block">
+                Return to Homepage
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

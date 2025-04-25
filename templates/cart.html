@@ -1,0 +1,137 @@
+{% extends 'base.html' %}
+{% block title %}Shopping Cart - Kokani Bazaar{% endblock %}
+
+{% block content %}
+<div class="py-12">
+    <div class="container mx-auto px-4">
+        <h1 class="text-3xl font-bold mb-8">Your Shopping Cart</h1>
+        
+        {% if products %}
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Cart Items -->
+            <div class="lg:col-span-2">
+                <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                    <div class="p-4 md:p-6 border-b">
+                        <div class="flex justify-between items-center">
+                            <h2 class="text-xl font-semibold">Shopping Cart ({{ products|length }} items)</h2>
+                            <!-- Clear Cart Form -->
+                            <form action="{{ url_for('clear_cart') }}" method="POST">
+                                {{ form.hidden_tag() }}  <!-- CSRF TOKEN ADDED -->
+                                <button type="submit" class="text-gray-500 hover:text-red-500 flex items-center text-sm">
+                                    <i data-lucide="trash-2" class="h-4 w-4 mr-1"></i>
+                                    Clear Cart
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                    
+                    <div class="divide-y">
+                        {% for product in products %}
+                        <div class="p-4 md:p-6 flex flex-col md:flex-row">
+                            <div class="flex-shrink-0 md:w-24 md:h-24 mb-4 md:mb-0">
+                                <img 
+                                    src="{{ product.image }}" 
+                                    alt="{{ product.name }}" 
+                                    class="w-full h-full object-cover rounded"
+                                />
+                            </div>
+                            
+                            <div class="md:ml-6 flex-grow">
+                                <div class="flex flex-col md:flex-row md:justify-between">
+                                    <div>
+                                        <a href="{{ url_for('product_detail', id=product.id) }}" class="font-semibold hover:text-garden-600 transition-colors">
+                                            {{ product.name }}
+                                        </a>
+                                        <p class="text-gray-600 text-sm">{{ product.category.name }}</p>
+                                    </div>
+                                    
+                                    <div class="text-right md:ml-4 mt-2 md:mt-0">
+                                        <div class="font-medium">₹{{ "%.2f"|format(product.price * session['cart'][product.id|string]) }}</div>
+                                        <div class="text-gray-500 text-sm">₹{{ "%.2f"|format(product.price) }} each</div>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex justify-between items-center mt-4">
+                                    <div class="flex items-center border rounded-md">
+                                        <!-- Decrease Quantity Form -->
+                                        <form action="{{ url_for('update_cart', product_id=product.id, action='decrease') }}" method="POST" class="inline">
+                                            {{ form.hidden_tag() }}  <!-- CSRF TOKEN ADDED -->
+                                            <button type="submit" class="h-8 px-2 text-gray-600">
+                                                <i data-lucide="minus" class="h-3 w-3"></i>
+                                            </button>
+                                        </form>
+                                        <span class="w-10 text-center text-sm">{{ session['cart'][product.id|string] }}</span>
+                                        <!-- Increase Quantity Form -->
+                                        <form action="{{ url_for('update_cart', product_id=product.id, action='increase') }}" method="POST" class="inline">
+                                            {{ form.hidden_tag() }}  <!-- CSRF TOKEN ADDED -->
+                                            <button type="submit" class="h-8 px-2 text-gray-600">
+                                                <i data-lucide="plus" class="h-3 w-3"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                    
+                                    <!-- Remove Item Form -->
+                                    <form action="{{ url_for('remove_from_cart', product_id=product.id) }}" method="POST" class="inline">
+                                        {{ form.hidden_tag() }}  <!-- CSRF TOKEN ADDED -->
+                                        <button type="submit" class="text-gray-500 hover:text-red-500">
+                                            <i data-lucide="trash-2" class="h-4 w-4"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                
+                <div class="mt-4">
+                    <a href="{{ url_for('shop') }}" class="inline-flex items-center text-garden-600 border border-garden-600 px-4 py-2 rounded-md">
+                        <i data-lucide="chevron-left" class="h-4 w-4 mr-1"></i>
+                        Continue Shopping
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Order Summary -->
+            <div>
+                <div class="bg-white rounded-lg shadow-md p-6 sticky top-20">
+                    <h2 class="text-xl font-semibold mb-4">Order Summary</h2>
+                    
+                    <div class="space-y-3 mb-6">
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Subtotal</span>
+                            <span>₹{{ "%.2f"|format(products|sum(attribute='price')) }}</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Shipping</span>
+                            <span class="text-garden-600">Free</span>
+                        </div>
+                        <div class="border-t pt-3 mt-3">
+                            <div class="flex justify-between font-semibold">
+                                <span>Total</span>
+                                <span>₹{{ "%.2f"|format(products|sum(attribute='total')) }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <a href="{{ url_for('checkout') }}" class="bg-garden-600 hover:bg-garden-700 text-white px-6 py-3 rounded-md font-medium inline-block w-full text-center mb-4">
+                        Proceed to Checkout
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="bg-white rounded-lg shadow-md p-8 text-center">
+            <div class="flex justify-center mb-4">
+                <i data-lucide="shopping-cart" class="h-16 w-16 text-gray-300"></i>
+            </div>
+            <h2 class="text-2xl font-semibold mb-2">Your cart is empty</h2>
+            <p class="text-gray-600 mb-6">Looks like you haven't added any products to your cart yet.</p>
+            <a href="{{ url_for('shop') }}" class="bg-garden-600 hover:bg-garden-700 text-white px-6 py-3 rounded-md font-medium inline-block">
+                Start Shopping
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

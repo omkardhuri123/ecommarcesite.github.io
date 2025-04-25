@@ -1,0 +1,196 @@
+{% extends 'base.html' %}
+{% block title %}{{ product.name }} - Kokani Bazaar{% endblock %}
+{% block content %}
+<div class="py-12">
+    <div class="container mx-auto px-4">
+        <!-- Breadcrumbs -->
+        <div class="mb-8">
+            <div class="flex items-center text-sm text-gray-500">
+                <a href="{{ url_for('index') }}" class="hover:text-garden-600">Home</a>
+                <i data-lucide="chevron-right" class="h-4 w-4 mx-2"></i>
+                <a href="{{ url_for('shop') }}" class="hover:text-garden-600">Shop</a>
+                <i data-lucide="chevron-right" class="h-4 w-4 mx-2"></i>
+                <a href="{{ url_for('category_detail', id=product.category_id) }}" class="hover:text-garden-600">{{ product.category.name }}</a>
+                <i data-lucide="chevron-right" class="h-4 w-4 mx-2"></i>
+                <span class="text-gray-800">{{ product.name }}</span>
+            </div>
+        </div>
+
+        <!-- Product Info -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-12 mb-16">
+            <!-- Product Image -->
+            <div class="rounded-lg overflow-hidden shadow-md">
+                <img 
+                    src="{{ product.image }}" 
+                    alt="{{ product.name }}" 
+                    class="w-full h-full object-cover"
+                />
+            </div>
+
+            <!-- Product Details -->
+            <div>
+                <h1 class="text-3xl font-bold mb-4">{{ product.name }}</h1>
+                
+                <!-- Rating -->
+                <div class="flex items-center mb-4">
+                    <div class="flex text-yellow-400">
+                        {% for i in range(5) %}
+                            {% if i < product.rating|int %}
+                                <i data-lucide="star" class="fill-current h-5 w-5"></i>
+                            {% elif product.rating - i >= 0.5 %}
+                                <i data-lucide="star-half" class="fill-current h-5 w-5"></i>
+                            {% else %}
+                                <i data-lucide="star" class="h-5 w-5"></i>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                    <span class="text-gray-600 ml-2">{{ product.rating }} Rating</span>
+                </div>
+
+                <!-- Price -->
+                <div class="mb-6">
+                    <div class="flex items-center">
+                        <span class="text-2xl font-bold text-garden-600">&#8377;{{ "%.2f"|format(product.price) }}</span>
+                        {% if product.original_price and product.original_price > product.price %}
+                        <span class="ml-3 text-lg text-gray-500 line-through">&#8377;{{ "%.2f"|format(product.original_price) }}</span>
+                        <span class="ml-3 bg-red-100 text-red-700 px-2 py-1 rounded text-sm font-medium">
+                            {{ ((product.original_price - product.price) / product.original_price * 100)|int }}% OFF
+                        </span>
+                        {% endif %}
+                    </div>
+                    {% if product.stock > 0 %}
+                    <p class="text-green-600 mt-2">In Stock ({{ product.stock }} available)</p>
+                    {% else %}
+                    <p class="text-red-600 mt-2">Out of Stock</p>
+                    {% endif %}
+                </div>
+
+                <!-- Description -->
+                <div class="mb-8">
+                    <h3 class="text-lg font-semibold mb-2">Description</h3>
+                    <p class="text-gray-600">{{ product.description }}</p>
+                </div>
+
+                <!-- Details -->
+                <div class="mb-8">
+                    <h3 class="text-lg font-semibold mb-2">Details</h3>
+                    <ul class="space-y-2 text-gray-600">
+                        <li class="flex">
+                            <span class="font-medium w-24">Category:</span>
+                            <span>{{ product.category.name }}</span>
+                        </li>
+                        {% if product.weight %}
+                        <li class="flex">
+                            <span class="font-medium w-24">Weight:</span>
+                            <span>{{ product.weight }}</span>
+                        </li>
+                        {% endif %}
+                        {% if product.origin %}
+                        <li class="flex">
+                            <span class="font-medium w-24">Origin:</span>
+                            <span>{{ product.origin }}</span>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </div>
+
+                <!-- Actions -->
+                <div class="flex flex-col space-y-4">
+                    <!-- Add to Cart Form -->
+                    <form action="{{ url_for('add_to_cart', product_id=product.id) }}" method="POST">
+                        <!-- {{ csrf_token() }}  ADD THIS LINE -->
+                        {{ form.hidden_tag() }}
+                        <div class="flex items-center">
+                            <div class="flex items-center border rounded-md mr-4">
+                                <button type="button" class="px-3 py-2 text-gray-600 hover:text-gray-800">
+                                    <i data-lucide="minus" class="h-4 w-4"></i>
+                                </button>
+                                <input type="number" name="quantity" min="1" max="{{ product.stock }}" value="1" class="w-12 text-center border-0 focus:ring-0 focus:outline-none" />
+                                <button type="button" class="px-3 py-2 text-gray-600 hover:text-gray-800">
+                                    <i data-lucide="plus" class="h-4 w-4"></i>
+                                </button>
+                            </div>
+                            <button type="submit" class="bg-garden-600 hover:bg-garden-700 text-white px-6 py-3 rounded-md font-medium flex-grow sm:flex-grow-0 flex items-center justify-center" {% if product.stock == 0 %}disabled{% endif %}>
+                                <i data-lucide="shopping-cart" class="h-5 w-5 mr-2"></i>
+                                Add to Cart
+                            </button>
+                        </div>
+                    </form>
+
+                    <!-- Add to Wishlist Form -->
+                    <form action="{{ url_for('add_to_wishlist', product_id=product.id) }}" method="POST">
+                        <!-- {{ csrf_token() }}  -->
+                        {{ form.hidden_tag() }}
+                        <button type="submit" class="border border-garden-600 text-garden-600 hover:bg-garden-50 px-6 py-3 rounded-md font-medium flex items-center justify-center w-full">
+                            <i data-lucide="heart" class="h-5 w-5 mr-2"></i>
+                            Add to Wishlist
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Related Products -->
+        <div>
+            <h2 class="text-2xl font-bold mb-6">Related Products</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                {% for product in related_products %}
+                <div class="product-card bg-white rounded-lg overflow-hidden shadow-md transition-all duration-300 hover:shadow-lg">
+                    <a href="{{ url_for('product_detail', id=product.id) }}" class="block relative">
+                        <div class="h-48 overflow-hidden">
+                            <img 
+                                src="{{ product.image }}" 
+                                alt="{{ product.name }}" 
+                                class="w-full h-full object-cover transition-transform duration-300"
+                            >
+                        </div>
+                        {% if product.original_price and product.original_price > product.price %}
+                        <div class="absolute top-2 left-2 bg-red-500 text-white text-xs font-medium px-2 py-1 rounded">
+                            Sale
+                        </div>
+                        {% endif %}
+                        {% if product.stock <= 5 and product.stock > 0 %}
+                        <div class="absolute top-2 right-2 bg-orange-500 text-white text-xs font-medium px-2 py-1 rounded">
+                            Limited
+                        </div>
+                        {% elif product.stock == 0 %}
+                        <div class="absolute top-2 right-2 bg-gray-500 text-white text-xs font-medium px-2 py-1 rounded">
+                            Sold Out
+                        </div>
+                        {% endif %}
+                    </a>
+                    <div class="p-4">
+                        <div class="mb-2 flex items-center text-yellow-400">
+                            {% for i in range(5) %}
+                                {% if i < product.rating|int %}
+                                    <i data-lucide="star" class="fill-current h-4 w-4"></i>
+                                {% elif product.rating - i >= 0.5 %}
+                                    <i data-lucide="star-half" class="fill-current h-4 w-4"></i>
+                                {% else %}
+                                    <i data-lucide="star" class="h-4 w-4"></i>
+                                {% endif %}
+                            {% endfor %}
+                            <span class="text-xs text-gray-500 ml-1">({{ product.rating }})</span>
+                        </div>
+                        <a href="{{ url_for('product_detail', id=product.id) }}" class="block">
+                            <h3 class="font-medium text-gray-900 mb-1">{{ product.name }}</h3>
+                        </a>
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <span class="font-medium text-garden-600">&#8377;{{ "%.2f"|format(product.price) }}</span>
+                                {% if product.original_price and product.original_price > product.price %}
+                                <span class="text-sm text-gray-500 line-through ml-2">&#8377;{{ "%.2f"|format(product.original_price) }}</span>
+                                {% endif %}
+                            </div>
+                            <button class="bg-garden-100 text-garden-700 p-2 rounded-full hover:bg-garden-200 transition-colors">
+                                <i data-lucide="shopping-cart" class="h-4 w-4"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

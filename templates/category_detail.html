@@ -1,0 +1,115 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ category.name }} - Kokani Bazaar{% endblock %}
+
+{% block content %}
+<div class="flex flex-col min-h-screen">
+    <!-- Category Hero -->
+    <section class="relative">
+        <div class="h-64 md:h-80 overflow-hidden">
+            <div class="absolute inset-0 bg-black/50 z-10"></div>
+            <img 
+                src="{{ category.image }}" 
+                alt="{{ category.name }}" 
+                class="w-full h-full object-cover"
+            />
+        </div>
+        
+        <div class="absolute inset-0 flex items-center z-20">
+            <div class="container mx-auto px-4">
+                <div class="max-w-xl">
+                    <a href="{{ url_for('categories') }}" class="inline-flex items-center mb-4 bg-white/90 hover:bg-white text-garden-800 px-4 py-2 rounded-md font-medium">
+                        <i data-lucide="chevron-left" class="h-4 w-4 mr-1"></i>
+                        All Categories
+                    </a>
+                    <h1 class="text-4xl font-bold text-white mb-2">{{ category.name }}</h1>
+                    <p class="text-white/90 text-lg">{{ category.description }}</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Products Grid -->
+    <section class="py-12">
+        <div class="container mx-auto px-4">
+            {% if products|length == 0 %}
+                <div class="text-center py-16">
+                    <h3 class="text-xl font-semibold mb-2">No products found in this category</h3>
+                    <p class="text-gray-600 mb-6">Check back later or explore other categories.</p>
+                    <a href="{{ url_for('categories') }}" class="bg-garden-600 hover:bg-garden-700 text-white px-6 py-3 rounded-md font-medium inline-block">
+                        View All Categories
+                    </a>
+                </div>
+            {% else %}
+                <h2 class="text-2xl font-bold mb-6">Products in {{ category.name }}</h2>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                    {% for product in products %}
+                    <div class="product-card bg-white rounded-lg overflow-hidden shadow-md transition-all duration-300 hover:shadow-lg">
+                        <a href="{{ url_for('product_detail', id=product.id) }}" class="block relative">
+                            <div class="h-48 overflow-hidden">
+                                <img 
+                                    src="{{ product.image }}" 
+                                    alt="{{ product.name }}" 
+                                    class="w-full h-full object-cover transition-transform duration-300"
+                                >
+                            </div>
+                            
+                            {% if product.original_price and product.original_price > product.price %}
+                            <div class="absolute top-2 left-2 bg-red-500 text-white text-xs font-medium px-2 py-1 rounded">
+                                Sale
+                            </div>
+                            {% endif %}
+                            
+                            {% if product.stock <= 5 and product.stock > 0 %}
+                            <div class="absolute top-2 right-2 bg-orange-500 text-white text-xs font-medium px-2 py-1 rounded">
+                                Limited
+                            </div>
+                            {% elif product.stock == 0 %}
+                            <div class="absolute top-2 right-2 bg-gray-500 text-white text-xs font-medium px-2 py-1 rounded">
+                                Sold Out
+                            </div>
+                            {% endif %}
+                        </a>
+                        
+                        <div class="p-4">
+                            <div class="mb-2 flex items-center text-yellow-400">
+                                {% for i in range(5) %}
+                                    {% if i < product.rating|int %}
+                                        <i data-lucide="star" class="fill-current h-4 w-4"></i>
+                                    {% elif product.rating - i >= 0.5 %}
+                                        <i data-lucide="star-half" class="fill-current h-4 w-4"></i>
+                                    {% else %}
+                                        <i data-lucide="star" class="h-4 w-4"></i>
+                                    {% endif %}
+                                {% endfor %}
+                                <span class="text-xs text-gray-500 ml-1">({{ product.rating }})</span>
+                            </div>
+                            
+                            <a href="{{ url_for('product_detail', id=product.id) }}" class="block">
+                                <h3 class="font-medium text-gray-900 mb-1">{{ product.name }}</h3>
+                            </a>
+                            
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <span class="font-medium text-garden-600">₹{{"%.2f"|format(product.price) }}</span>
+                                    {% if product.original_price and product.original_price > product.price %}
+                                    <span class="text-sm text-gray-500 line-through ml-2">₹{{"%.2f"|format(product.original_price) }}</span>
+                                    {% endif %}
+                                </div>
+                                
+                                <form action="{{ url_for('add_to_cart', product_id=product.id) }}" method="POST" class="inline">
+                                    {{ form.hidden_tag() }}  <!-- Add this if using Flask-WTF -->
+                                    <button type="submit" class="bg-garden-100 text-garden-700 p-2 rounded-full hover:bg-garden-200 transition-colors">
+                                        <i data-lucide="shopping-cart" class="h-4 w-4"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+    </section>
+</div>
+{% endblock %}

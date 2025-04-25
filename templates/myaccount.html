@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block title %}My Account - Kokani Bazaar{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <h1 class="text-2xl font-semibold mb-6">My Account</h1>
+    
+    <div class="bg-white shadow-md rounded-lg p-6">
+        <h2 class="text-lg font-medium mb-4">Personal Information</h2>
+        
+        <form id="account-form" class="space-y-4">
+            <div>
+                <label class="block text-sm font-medium text-gray-700">Full Name</label>
+                <input 
+                    type="text" 
+                    name="name" 
+                    value="{{ user.name }}"
+                    class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-garden-500 focus:border-garden-500"
+                >
+            </div>
+            
+            <div>
+                <label class="block text-sm font-medium text-gray-700">Email Address</label>
+                <input 
+                    type="email" 
+                    name="email" 
+                    value="{{ user.email }}"
+                    class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-garden-500 focus:border-garden-500"
+                >
+            </div>
+            
+            <div>
+                <label class="block text-sm font-medium text-gray-700">Delivery Address</label>
+                <textarea 
+                    name="address" 
+                    rows="3"
+                    class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-garden-500 focus:border-garden-500"
+                >{{ user.address }}</textarea>
+            </div>
+            
+            <div class="flex justify-end space-x-3">
+                <button type="button" class="px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300">Cancel</button>
+                <button type="submit" class="px-4 py-2 bg-garden-600 text-white rounded-lg hover:bg-garden-700">Save Changes</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

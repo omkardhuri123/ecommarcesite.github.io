@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% block title %}Order Confirmation - Kokani Bazaar{% endblock %}
+{% block content %}
+<div class="py-12">
+    <div class="container mx-auto px-4">
+        <div class="max-w-3xl mx-auto bg-white rounded-lg shadow-md p-8">
+            <div class="text-center mb-8">
+                <i data-lucide="check-circle" class="h-16 w-16 text-green-500 mx-auto"></i>
+                <h1 class="text-3xl font-bold mt-4">Order Confirmed!</h1>
+                <p class="text-gray-600 mt-2">Your order #{{ order.id }} has been placed successfully</p>
+            </div>
+            
+            <div class="space-y-6">
+                <!-- Order Summary -->
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Order Summary</h3>
+                    <div class="space-y-2">
+                        {% for item in order.order_items %}  <!-- UPDATED -->
+                        <div class="flex justify-between">
+                            <span>{{ item.product.name }} × {{ item.quantity }}</span>
+                            <span>${{ "%.2f"|format(item.quantity * item.price) }}</span>  <!-- Use item.item_total -->
+                        </div>
+                        {% endfor %}
+                        <div class="flex justify-between font-medium">
+                            <span>Total</span>
+                            <span>${{ "%.2f"|format(order.total) }}</span>  <!-- UPDATED -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Shipping Address -->
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Shipping Address</h3>
+                    <p>{{ order.first_name }} {{ order.last_name }}</p>
+                    <p>{{ order.address }}</p>
+                    <p>{{ order.city }}, {{ order.state }} {{ order.zip }}</p>
+                    <p>{{ order.country }}</p>
+                </div>
+
+                <!-- Contact Information -->
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Contact Information</h3>
+                    <p>Email: {{ order.email }}</p>
+                    <p>Phone: {{ order.phone }}</p>
+                </div>
+            </div>
+
+            <div class="mt-8 text-center">
+                <a href="{{ url_for('index') }}" 
+                   class="bg-garden-600 hover:bg-garden-700 text-white px-6 py-3 rounded-md font-medium">
+                    Back to Home
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
