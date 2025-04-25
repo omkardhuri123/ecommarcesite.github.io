@@ -16,10 +16,13 @@ An organic product e-commerce platform built with Flask and MySQL.
 - **Database**: MySQL
 - **Frontend**: HTML, CSS, Tailwind CSS
 - **Icons**: Lucide.js
-
+-**Git**:GIT
 ## Setup Instructions
 
-1. Clone the repository
+1. Clone the repository'''1. Clone repository:
+   ```bash
+   git clone https://github.com/omkardhuri123/e_commarce_site.git
+   cd e_commarce_site '''
 2. Create a virtual environment
    ```
    python -m venv venv
