@@ -4546,3 +4546,197 @@ sqlalchemy.exc.DatabaseError: (mysql.connector.errors.DatabaseError) 2005 (HY000
 2025-04-25 12:49:31,830 INFO: Application is running in PRODUCTION mode. [in c:\Users\admin\Desktop\LOVABLE-MANGO\app.py:55]
 2025-04-25 12:49:31,831 INFO: Starting Waitress server on 127.0.0.1:8080 [in c:\Users\admin\Desktop\LOVABLE-MANGO\app.py:61]
 2025-04-25 12:49:31,837 INFO: Serving on http://127.0.0.1:8080 [in C:\Users\admin\Desktop\LOVABLE-MANGO\venv\Lib\site-packages\waitress\wasyncore.py:449]
+2025-04-25 23:00:10,138 INFO: [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000 [in C:\Users\admin\Desktop\LOVABLE-MANGO\venv\Lib\site-packages\werkzeug\_internal.py:187]
+2025-04-25 23:00:10,139 INFO: [33mPress CTRL+C to quit[0m [in C:\Users\admin\Desktop\LOVABLE-MANGO\venv\Lib\site-packages\werkzeug\_internal.py:187]
+2025-04-26 00:02:02,191 INFO: [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000 [in C:\Users\admin\Desktop\LOVABLE-MANGO\venv\Lib\site-packages\werkzeug\_internal.py:187]
+2025-04-26 00:02:02,192 INFO: [33mPress CTRL+C to quit[0m [in C:\Users\admin\Desktop\LOVABLE-MANGO\venv\Lib\site-packages\werkzeug\_internal.py:187]
+2025-04-26 00:02:16,864 ERROR: Exception on / [GET] [in C:\Users\admin\Desktop\LOVABLE-MANGO\venv\Lib\site-packages\flask\app.py:1414]
+Traceback (most recent call last):
+  File "C:\Users\admin\Desktop\LOVABLE-MANGO\venv\Lib\site-packages\mysql\connector\connection_cext.py", line 354, in _open_connection
+    self._cmysql.connect(**cnx_kwargs)
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+_mysql_connector.MySQLInterfaceError: Access denied for user 'app_user'@'103.26.226.47' (using password: YES)
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\admin\Desktop\LOVABLE-MANGO\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 146, in __init__
+    self._dbapi_connection = engine.raw_connection()
+                             ~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\admin\Desktop\LOVABLE-MANGO\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 3298, in raw_connection
+    return self.pool.connect()
+           ~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\admin\Desktop\LOVABLE-MANGO\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 449, in connect
+    return _ConnectionFairy._checkout(self)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\admin\Desktop\LOVABLE-MANGO\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 1264, in _checkout
+    fairy = _ConnectionRecord.checkout(pool)
+  File "C:\Users\admin\Desktop\LOVABLE-MANGO\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 713, in checkout
+    rec = pool._do_get()
+  File "C:\Users\admin\Desktop\LOVABLE-MANGO\venv\Lib\site-packages\sqlalchemy\pool\impl.py", line 179, in _do_get
+    with util.safe_reraise():
+         ~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\admin\Desktop\LOVABLE-MANGO\venv\Lib\site-packages\sqlalchemy\util\langhelpers.py", line 146, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "C:\Users\admin\Desktop\LOVABLE-MANGO\venv\Lib\site-packages\sqlalchemy\pool\impl.py", line 177, in _do_get
+    return self._create_connection()
+           ~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\admin\Desktop\LOVABLE-MANGO\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 390, in _create_connection
+    return _ConnectionRecord(self)
+  File "C:\Users\admin\Desktop\LOVABLE-MANGO\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 675, in __init__
+    self.__connect()
+    ~~~~~~~~~~~~~~^^
+  File "C:\Users\admin\Desktop\LOVABLE-MANGO\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 901, in __connect
+    with util.safe_reraise():
+         ~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\admin\Desktop\LOVABLE-MANGO\venv\Lib\site-packages\sqlalchemy\util\langhelpers.py", line 146, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "C:\Users\admin\Desktop\LOVABLE-MANGO\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 897, in __connect
+    self.dbapi_connection = connection = pool._invoke_creator(self)
+                                         ~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\admin\Desktop\LOVABLE-MANGO\venv\Lib\site-packages\sqlalchemy\engine\create.py", line 646, in connect
+    return dialect.connect(*cargs, **cparams)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\admin\Desktop\LOVABLE-MANGO\venv\Lib\site-packages\sqlalchemy\engine\default.py", line 625, in connect
+    return self.loaded_dbapi.connect(*cargs, **cparams)  # type: ignore[no-any-return]  # NOQA: E501
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\admin\Desktop\LOVABLE-MANGO\venv\Lib\site-packages\mysql\connector\pooling.py", line 322, in connect
+    return CMySQLConnection(*args, **kwargs)
+  File "C:\Users\admin\Desktop\LOVABLE-MANGO\venv\Lib\site-packages\mysql\connector\connection_cext.py", line 142, in __init__
+    self.connect(**kwargs)
+    ~~~~~~~~~~~~^^^^^^^^^^
+  File "C:\Users\admin\Desktop\LOVABLE-MANGO\venv\Lib\site-packages\mysql\connector\abstracts.py", line 1605, in connect
+    self._open_connection()
+    ~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\admin\Desktop\LOVABLE-MANGO\venv\Lib\site-packages\mysql\connector\connection_cext.py", line 360, in _open_connection
+    raise get_mysql_exception(
+        err.errno, msg=err.msg, sqlstate=err.sqlstate
+    ) from err
+mysql.connector.errors.ProgrammingError: 1045 (28000): Access denied for user 'app_user'@'103.26.226.47' (using password: YES)
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\admin\Desktop\LOVABLE-MANGO\venv\Lib\site-packages\flask\app.py", line 2190, in wsgi_app
+    response = self.full_dispatch_request()
+  File "C:\Users\admin\Desktop\LOVABLE-MANGO\venv\Lib\site-packages\flask\app.py", line 1486, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "C:\Users\admin\Desktop\LOVABLE-MANGO\venv\Lib\site-packages\flask\app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "C:\Users\admin\Desktop\LOVABLE-MANGO\venv\Lib\site-packages\flask\app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\admin\Desktop\LOVABLE-MANGO\routes.py", line 13, in index
+    featured_products = Product.query.filter_by(featured=True).limit(4).all()
+  File "C:\Users\admin\Desktop\LOVABLE-MANGO\venv\Lib\site-packages\sqlalchemy\orm\query.py", line 2704, in all
+    return self._iter().all()  # type: ignore
+           ~~~~~~~~~~^^
+  File "C:\Users\admin\Desktop\LOVABLE-MANGO\venv\Lib\site-packages\sqlalchemy\orm\query.py", line 2858, in _iter
+    result: Union[ScalarResult[_T], Result[_T]] = self.session.execute(
+                                                  ~~~~~~~~~~~~~~~~~~~~^
+        statement,
+        ^^^^^^^^^^
+        params,
+        ^^^^^^^
+        execution_options={"_sa_orm_load_options": self.load_options},
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\admin\Desktop\LOVABLE-MANGO\venv\Lib\site-packages\sqlalchemy\orm\session.py", line 2365, in execute
+    return self._execute_internal(
+           ~~~~~~~~~~~~~~~~~~~~~~^
+        statement,
+        ^^^^^^^^^^
+    ...<4 lines>...
+        _add_event=_add_event,
+        ^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\admin\Desktop\LOVABLE-MANGO\venv\Lib\site-packages\sqlalchemy\orm\session.py", line 2241, in _execute_internal
+    conn = self._connection_for_bind(bind)
+  File "C:\Users\admin\Desktop\LOVABLE-MANGO\venv\Lib\site-packages\sqlalchemy\orm\session.py", line 2110, in _connection_for_bind
+    return trans._connection_for_bind(engine, execution_options)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<string>", line 2, in _connection_for_bind
+  File "C:\Users\admin\Desktop\LOVABLE-MANGO\venv\Lib\site-packages\sqlalchemy\orm\state_changes.py", line 139, in _go
+    ret_value = fn(self, *arg, **kw)
+  File "C:\Users\admin\Desktop\LOVABLE-MANGO\venv\Lib\site-packages\sqlalchemy\orm\session.py", line 1189, in _connection_for_bind
+    conn = bind.connect()
+  File "C:\Users\admin\Desktop\LOVABLE-MANGO\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 3274, in connect
+    return self._connection_cls(self)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\admin\Desktop\LOVABLE-MANGO\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 148, in __init__
+    Connection._handle_dbapi_exception_noconnection(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        err, dialect, engine
+        ^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\admin\Desktop\LOVABLE-MANGO\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 2439, in _handle_dbapi_exception_noconnection
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "C:\Users\admin\Desktop\LOVABLE-MANGO\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 146, in __init__
+    self._dbapi_connection = engine.raw_connection()
+                             ~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\admin\Desktop\LOVABLE-MANGO\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 3298, in raw_connection
+    return self.pool.connect()
+           ~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\admin\Desktop\LOVABLE-MANGO\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 449, in connect
+    return _ConnectionFairy._checkout(self)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\admin\Desktop\LOVABLE-MANGO\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 1264, in _checkout
+    fairy = _ConnectionRecord.checkout(pool)
+  File "C:\Users\admin\Desktop\LOVABLE-MANGO\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 713, in checkout
+    rec = pool._do_get()
+  File "C:\Users\admin\Desktop\LOVABLE-MANGO\venv\Lib\site-packages\sqlalchemy\pool\impl.py", line 179, in _do_get
+    with util.safe_reraise():
+         ~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\admin\Desktop\LOVABLE-MANGO\venv\Lib\site-packages\sqlalchemy\util\langhelpers.py", line 146, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "C:\Users\admin\Desktop\LOVABLE-MANGO\venv\Lib\site-packages\sqlalchemy\pool\impl.py", line 177, in _do_get
+    return self._create_connection()
+           ~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\admin\Desktop\LOVABLE-MANGO\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 390, in _create_connection
+    return _ConnectionRecord(self)
+  File "C:\Users\admin\Desktop\LOVABLE-MANGO\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 675, in __init__
+    self.__connect()
+    ~~~~~~~~~~~~~~^^
+  File "C:\Users\admin\Desktop\LOVABLE-MANGO\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 901, in __connect
+    with util.safe_reraise():
+         ~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\admin\Desktop\LOVABLE-MANGO\venv\Lib\site-packages\sqlalchemy\util\langhelpers.py", line 146, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "C:\Users\admin\Desktop\LOVABLE-MANGO\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 897, in __connect
+    self.dbapi_connection = connection = pool._invoke_creator(self)
+                                         ~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\admin\Desktop\LOVABLE-MANGO\venv\Lib\site-packages\sqlalchemy\engine\create.py", line 646, in connect
+    return dialect.connect(*cargs, **cparams)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\admin\Desktop\LOVABLE-MANGO\venv\Lib\site-packages\sqlalchemy\engine\default.py", line 625, in connect
+    return self.loaded_dbapi.connect(*cargs, **cparams)  # type: ignore[no-any-return]  # NOQA: E501
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\admin\Desktop\LOVABLE-MANGO\venv\Lib\site-packages\mysql\connector\pooling.py", line 322, in connect
+    return CMySQLConnection(*args, **kwargs)
+  File "C:\Users\admin\Desktop\LOVABLE-MANGO\venv\Lib\site-packages\mysql\connector\connection_cext.py", line 142, in __init__
+    self.connect(**kwargs)
+    ~~~~~~~~~~~~^^^^^^^^^^
+  File "C:\Users\admin\Desktop\LOVABLE-MANGO\venv\Lib\site-packages\mysql\connector\abstracts.py", line 1605, in connect
+    self._open_connection()
+    ~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\admin\Desktop\LOVABLE-MANGO\venv\Lib\site-packages\mysql\connector\connection_cext.py", line 360, in _open_connection
+    raise get_mysql_exception(
+        err.errno, msg=err.msg, sqlstate=err.sqlstate
+    ) from err
+sqlalchemy.exc.ProgrammingError: (mysql.connector.errors.ProgrammingError) 1045 (28000): Access denied for user 'app_user'@'103.26.226.47' (using password: YES)
+(Background on this error at: https://sqlalche.me/e/20/f405)
+2025-04-26 00:02:37,222 INFO: 127.0.0.1 - - [26/Apr/2025 00:02:37] "[35m[1mGET / HTTP/1.1[0m" 500 - [in C:\Users\admin\Desktop\LOVABLE-MANGO\venv\Lib\site-packages\werkzeug\_internal.py:187]
+2025-04-26 00:02:38,030 INFO: 127.0.0.1 - - [26/Apr/2025 00:02:38] "[33mGET /static/css/styles.css HTTP/1.1[0m" 404 - [in C:\Users\admin\Desktop\LOVABLE-MANGO\venv\Lib\site-packages\werkzeug\_internal.py:187]
+2025-04-26 00:02:42,203 INFO: 127.0.0.1 - - [26/Apr/2025 00:02:42] "[33mGET /favicon.ico HTTP/1.1[0m" 404 - [in C:\Users\admin\Desktop\LOVABLE-MANGO\venv\Lib\site-packages\werkzeug\_internal.py:187]
+2025-04-26 00:05:00,931 INFO: Application is running in PRODUCTION mode. [in c:\Users\admin\Desktop\LOVABLE-MANGO\app.py:57]
+2025-04-26 00:05:00,932 INFO: Starting Waitress server on 127.0.0.1:8080 [in c:\Users\admin\Desktop\LOVABLE-MANGO\app.py:63]
+2025-04-26 00:05:00,937 INFO: Serving on http://127.0.0.1:8080 [in C:\Users\admin\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\waitress\wasyncore.py:449]
+2025-04-26 00:06:36,681 INFO: package: mysql.connector.plugins [in C:\Users\admin\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\mysql\connector\plugins\__init__.py:149]
+2025-04-26 00:06:36,681 INFO: plugin_name: caching_sha2_password [in C:\Users\admin\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\mysql\connector\plugins\__init__.py:150]
+2025-04-26 00:06:36,682 INFO: AUTHENTICATION_PLUGIN_CLASS: MySQLCachingSHA2PasswordAuthPlugin [in C:\Users\admin\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\mysql\connector\plugins\__init__.py:154]
+2025-04-26 00:07:28,919 WARNING: Task queue depth is 1 [in C:\Users\admin\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\waitress\task.py:113]
