@@ -65,6 +65,35 @@ An organic product e-commerce platform built with Flask and MySQL.
 - Payment processing integration
 - Search functionality
 
+
+## Troubleshooting Vim Swap File Error
+
+If you see a message like:
+  E325: ATTENTION
+  Found a swap file by the name "~/Desktop/LOVABLE-MANGO/.git/.COMMIT_EDITMSG.swp" ...
+
+Follow these steps:
+1. If another program is editing the file, exit the duplicate session.
+2. If the session crashed, run:
+     vim -r c:\Users\admin\Desktop\LOVABLE-MANGO\.git\COMMIT_EDITMSG
+3. Once recovered, remove the swap file:
+     del c:\Users\admin\Desktop\LOVABLE-MANGO\.git\.COMMIT_EDITMSG.swp
+
 ## License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
+
+# e_commarce_site
+
+## Resolving Merge Conflicts
+
+To resolve merge conflicts in the README.md file, follow these steps:
+
+1. Stage the updated README.md file:
+   ```
+   git add c:\Users\admin\Desktop\LOVABLE-MANGO\README.md
+   ```
+2. Commit the merge resolution with a descriptive message:
+   ```
+   git commit -m "Merge resolved: concluded merge after conflict resolution"
+   ```
