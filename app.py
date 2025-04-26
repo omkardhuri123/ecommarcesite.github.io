@@ -12,9 +12,6 @@ from extensions import init_extensions,freezer
 # --- Environment Setup ---
 load_dotenv()
 
-# Initialize extensions
-freezer.init_app(app)  # Initialize Frozen-Flask
-
 # --- Logging Configuration ---
 logging.basicConfig(
     level=logging.INFO,
@@ -30,6 +27,9 @@ app.config.from_object(Config)
 # app.py
 app.config['FREEZER_BASE_URL'] = '/ecommarcesite.github.io/'  # e.g., '/my-flask-app/'
 app.config['FREEZER_DESTINATION'] = './build'
+
+# Initialize extensions
+freezer.init_app(app)  # Initialize Frozen-Flask
 
 # --- Configuration ---
 # Secret Key
