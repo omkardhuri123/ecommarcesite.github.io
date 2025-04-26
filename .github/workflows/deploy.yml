@@ -7,7 +7,7 @@ on:
 
 jobs:
   build-and-deploy:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
 
     services:
       mysql:
@@ -44,9 +44,8 @@ jobs:
 
     - name: Install MySQL Client
       run: |
-        choco install mysql --version=8.0.26
-        $env:PATH += ";C:\Program Files\MySQL\MySQL Server 9.2\bin\"
-      shell: powershell
+        sudo apt-get update
+        sudo apt-get install -y mysql-client  # Linux package manager [[3]]
 
     - name: Install dependencies
       run: |
@@ -56,8 +55,8 @@ jobs:
 
     - name: Initialize database
       run: |
-        mysql -h %DB_HOST% -u %DB_USER% -p%DB_PASSWORD% %DB_NAME% < schema.sql
-      shell: cmd
+        mysql -h $DB_HOST -u $DB_USER -p$DB_PASSWORD $DB_NAME < schema.sql
+      # Removed Windows CMD syntax [[4]]
 
     - name: Run migrations
       run: |
