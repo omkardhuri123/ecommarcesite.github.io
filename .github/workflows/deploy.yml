@@ -28,7 +28,7 @@ jobs:
     env:
       FLASK_APP: app.py
       FLASK_ENV: production
-      DB_HOST: localhost
+      DB_HOST: 127.0.0.1
       DB_USER: ${{ secrets.DB_USER }}
       DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
       DB_NAME: ${{ secrets.DB_NAME }}
@@ -46,6 +46,13 @@ jobs:
       run: |
         sudo apt-get update
         sudo apt-get install -y mysql-client  # Linux package manager [[3]]
+
+    - name: Wait for MySQL service
+      run: |
+        until mysqladmin ping -h $DB_HOST --silent; do
+          echo "Waiting for MySQL service..."
+          sleep 5
+        done
 
     - name: Install dependencies
       run: |
