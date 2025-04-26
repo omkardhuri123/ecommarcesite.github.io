@@ -1,7 +1,7 @@
 """Add payment fields to Order
 
 Revision ID: 005dd2116ed9
-Revises: e02679935f60
+Revises: e02679935f60  # Make sure this matches the latest migration in remote
 Create Date: 2025-04-16 08:58:46.618161
 
 """

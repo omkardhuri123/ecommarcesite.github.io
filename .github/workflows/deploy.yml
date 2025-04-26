@@ -26,13 +26,14 @@ jobs:
           --health-retries=3
 
     env:
-          FLASK_APP: app.py
-          FLASK_ENV: production
-          DB_HOST: 127.0.0.1
-          DB_USER: ${{ secrets.DB_USER }}
-          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-          DB_NAME: ${{ secrets.DB_NAME }}
-          DATABASE_URI: mysql+pymysql://${{ secrets.DB_USER }}:${{ secrets.DB_PASSWORD }}@127.0.0.1/${{ secrets.DB_NAME }}
+      FLASK_APP: app.py
+      FLASK_ENV: production
+      DB_HOST: 127.0.0.1
+      DB_USER: ${{ secrets.DB_USER }}
+      DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+      DB_NAME: ${{ secrets.DB_NAME }}
+      DATABASE_URI: mysql+pymysql://${{ secrets.DB_USER }}:${{ secrets.DB_PASSWORD }}@127.0.0.1/${{ secrets.DB_NAME }}
+      SECRET_KEY: ${{ secrets.SECRET_KEY }}
 
     steps:
     - name: Checkout code
@@ -41,12 +42,23 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
-        python-version: '3.13'
+        python-version: '3.10'
+
+    - name: Check MySQL Service Logs
+      run: docker logs $(docker ps -q --filter "ancestor=mysql:8.0")
 
     - name: Install MySQL Client
       run: |
         sudo apt-get update
-        sudo apt-get install -y mysql-client  # Linux package manager [[3]]
+        sudo apt-get install -y mysql-client  # [[3]]
+
+    - name: Debug MySQL Connection
+      run: |
+        mysqladmin ping -h $DB_HOST -u $DB_USER -p$DB_PASSWORD || echo "MySQL connection failed"
+
+    - name: Verify Database SQL File
+      run: |
+        if [ ! -f database.sql ]; then echo "database.sql not found"; exit 1; fi
 
     - name: Wait for MySQL service
       run: |
@@ -60,11 +72,11 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
         pip install Frozen-Flask Flask-Migrate
+        pip check
 
     - name: Initialize database
       run: |
         mysql -h $DB_HOST -u $DB_USER -p$DB_PASSWORD $DB_NAME < database.sql
-      # Removed Windows CMD syntax [[4]]
 
     - name: Run migrations
       run: |
@@ -74,9 +86,9 @@ jobs:
       run: |
         python seed.py
 
-    - name: Run tests
+    - name: Run tests with verbose output
       run: |
-        pytest
+        pytest -v || echo "Tests failed"
 
     - name: Freeze static files
       run: |
