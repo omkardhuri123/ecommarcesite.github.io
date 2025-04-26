@@ -6,11 +6,14 @@ from dotenv import load_dotenv
 from flask import Flask
 from flask_wtf.csrf import CSRFProtect
 from waitress import serve
-from extensions import init_extensions
+from extensions import init_extensions,freezer
 
 
 # --- Environment Setup ---
 load_dotenv()
+
+# Initialize extensions
+freezer.init_app(app)  # Initialize Frozen-Flask
 
 # --- Logging Configuration ---
 logging.basicConfig(
@@ -23,6 +26,10 @@ logger = logging.getLogger(__name__)
 # --- Flask App Initialization ---
 app = Flask(__name__)
 app.config.from_object(Config)
+
+# app.py
+app.config['FREEZER_BASE_URL'] = '/ecommarcesite.github.io/'  # e.g., '/my-flask-app/'
+app.config['FREEZER_DESTINATION'] = './build'
 
 # --- Configuration ---
 # Secret Key

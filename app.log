@@ -4740,3 +4740,6 @@ sqlalchemy.exc.ProgrammingError: (mysql.connector.errors.ProgrammingError) 1045 
 2025-04-26 00:06:36,681 INFO: plugin_name: caching_sha2_password [in C:\Users\admin\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\mysql\connector\plugins\__init__.py:150]
 2025-04-26 00:06:36,682 INFO: AUTHENTICATION_PLUGIN_CLASS: MySQLCachingSHA2PasswordAuthPlugin [in C:\Users\admin\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\mysql\connector\plugins\__init__.py:154]
 2025-04-26 00:07:28,919 WARNING: Task queue depth is 1 [in C:\Users\admin\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\waitress\task.py:113]
+2025-04-26 00:22:25,283 INFO: Application is running in PRODUCTION mode. [in c:\Users\admin\Desktop\LOVABLE-MANGO\app.py:57]
+2025-04-26 00:22:25,283 INFO: Starting Waitress server on 127.0.0.1:8080 [in c:\Users\admin\Desktop\LOVABLE-MANGO\app.py:63]
+2025-04-26 00:22:25,288 INFO: Serving on http://127.0.0.1:8080 [in C:\Users\admin\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\waitress\wasyncore.py:449]
