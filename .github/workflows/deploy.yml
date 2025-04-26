@@ -33,7 +33,7 @@ jobs:
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
           DB_NAME: ${{ secrets.DB_NAME }}
           DATABASE_URI: mysql+pymysql://${{ secrets.DB_USER }}:${{ secrets.DB_PASSWORD }}@127.0.0.1/${{ secrets.DB_NAME }}
-
+          SECRET_KEY: ${{ secrets.SECRET_KEY }} 
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
