@@ -6,12 +6,16 @@ from dotenv import load_dotenv
 from flask import Flask
 from flask_wtf.csrf import CSRFProtect
 from waitress import serve
-from extensions import init_extensions
+from extensions import init_extensions,db, migrate, freezer
 
 
 # --- Environment Setup ---
 load_dotenv()
 
+# Initialize extensions
+db.init_app(app)
+migrate.init_app(app, db)
+freezer.init_app(app)  # Initialize Frozen-Flask
 # --- Logging Configuration ---
 logging.basicConfig(
     level=logging.INFO,
