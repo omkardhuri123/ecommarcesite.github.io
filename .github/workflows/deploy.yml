@@ -55,7 +55,7 @@ jobs:
 
     - name: Initialize database
       run: |
-        mysql -h $DB_HOST -u $DB_USER -p$DB_PASSWORD $DB_NAME < schema.sql
+        mysql -h $DB_HOST -u $DB_USER -p$DB_PASSWORD $DB_NAME < database.sql
       # Removed Windows CMD syntax [[4]]
 
     - name: Run migrations
