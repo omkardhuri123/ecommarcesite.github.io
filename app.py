@@ -24,6 +24,10 @@ logger = logging.getLogger(__name__)
 app = Flask(__name__)
 app.config.from_object(Config)
 
+# app.py
+app.config['FREEZER_BASE_URL'] = '/ecommarcesite.github.io/'  # e.g., '/my-flask-app/'
+app.config['FREEZER_DESTINATION'] = './build'
+
 # --- Configuration ---
 # Secret Key
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'a-very-insecure-default-key-change-me')
