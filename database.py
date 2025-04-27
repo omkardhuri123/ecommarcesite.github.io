@@ -4,12 +4,16 @@ from mysql.connector import errorcode
 
 DB_CONFIG = {
     'host': os.environ.get('DB_HOST', '127.0.0.1'),
-    'database': os.environ.get('DB_NAME', 'kokani_bazaar'),
-    'option_files': '~/.my.cnf'  # Use the credentials from .my.cnf
+    'user': os.environ.get('DB_USER'),
+    'password': os.environ.get('DB_PASSWORD'),
+    'database': os.environ.get('DB_NAME', 'kokani_bazaar')
 }
 
+connection = None
+cursor = None
+
 try:
-    # Use option_files for credentials
+    # Connect to the database
     connection = mysql.connector.connect(**DB_CONFIG)
     cursor = connection.cursor()
 
@@ -29,8 +33,9 @@ except mysql.connector.Error as err:
         print("Database does not exist.")
     else:
         print(err)
+
 finally:
     if cursor:
         cursor.close()
-    if connection:
+    if connection and connection.is_connected():
         connection.close()
