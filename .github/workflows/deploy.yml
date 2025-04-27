@@ -112,16 +112,43 @@ jobs:
         mysql -h "$DB_HOST" -u "$DB_USER" -p"$DB_PASSWORD" -e "SHOW DATABASES;" || echo "Connection failed"
         mysql -h "$DB_HOST" -u "$DB_USER" -p"$DB_PASSWORD" -e "SELECT 1;" || echo "MySQL connection test failed"
 
-    - name: Configure MySQL User
+    - name: Debug MySQL Version and Connectivity
       run: |
-        mysql -h "$DB_HOST" -u root -p"${{ secrets.DB_ROOT_PASSWORD }}" -e "
-          CREATE USER IF NOT EXISTS '$DB_USER'@'%';
-          ALTER USER '$DB_USER'@'%' IDENTIFIED BY '$DB_PASSWORD';
-          GRANT ALL PRIVILEGES ON $DB_NAME.* TO '$DB_USER'@'%';
-          FLUSH PRIVILEGES;
+        echo "Checking MySQL version and connectivity..."
+        mysql -h "$DB_HOST" -u root -p"${{ secrets.DB_ROOT_PASSWORD }}" -e "SELECT VERSION();" || {
+          echo "Root connection failed. Checking environment..."
+          env | grep DB_
+          exit 1
+        }
+
+    - name: Configure MySQL User and Privileges
+      run: |
+        if mysql -h "$DB_HOST" -u root -p"${{ secrets.DB_ROOT_PASSWORD }}" -e "SELECT VERSION();"; then
+          echo "MySQL connection established. Configuring user..."
+          mysql -h "$DB_HOST" -u root -p"${{ secrets.DB_ROOT_PASSWORD }}" -e "
+            CREATE USER IF NOT EXISTS '$DB_USER'@'%';
+            ALTER USER '$DB_USER'@'%' IDENTIFIED BY '$DB_PASSWORD';
+            GRANT ALL PRIVILEGES ON \`$DB_NAME\`.* TO '$DB_USER'@'%';
+            FLUSH PRIVILEGES;
+            SHOW GRANTS FOR '$DB_USER'@'%';
+          " || {
+            echo "MySQL configuration failed. Check root credentials."
+            exit 1
+          }
+        else
+          echo "MySQL connection failed. Verify DB_HOST and root password."
+          exit 1
+        fi
+
+    - name: Verify User Access
+      run: |
+        echo "Testing user privileges..."
+        mysql -h "$DB_HOST" -u "$DB_USER" -p"$DB_PASSWORD" -e "
+          SELECT CURRENT_USER(), USER(), VERSION();
+          SHOW DATABASES;
         " || {
-          echo "Failed to configure MySQL user. Checking root access..."
-          mysql -h "$DB_HOST" -u root -p"${{ secrets.DB_ROOT_PASSWORD }}" -e "SELECT CURRENT_USER();"
+          echo "User access verification failed"
+          exit 1
         }
 
     - name: Verify and prepare database files
