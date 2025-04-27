@@ -1,0 +1,17 @@
+version: 2
+updates:
+  - package-ecosystem: "pip"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    allow:
+      - dependency-type: "all"
+    labels:
+      - "dependencies"
+      - "security"
+    reviewers:
+      - "omkardhuri123"
+    commit-message:
+      prefix: "fix"
+      prefix-development: "chore"
+      include: "scope"
