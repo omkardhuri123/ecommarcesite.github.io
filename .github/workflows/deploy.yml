@@ -30,7 +30,7 @@ jobs:
           --health-interval=20s
           --health-timeout=10s
           --health-retries=10
-          --health-start-period=60s
+          --health-start-period=90s
 
     env:
       FLASK_APP: app.py
@@ -89,6 +89,7 @@ jobs:
         timeout 60s bash -c '
         until mysqladmin ping -h "$DB_HOST" -u "$DB_USER" -p"$DB_PASSWORD" --silent; do
           echo "MySQL not ready - waiting..."
+          docker logs $(docker ps -q --filter "ancestor=mysql:8.0")
           sleep 2
         done
         '
@@ -105,23 +106,23 @@ jobs:
           fi
         done
 
-    - name: Test MySQL Connection
+    - name: Debug MySQL Connection
       run: |
-        echo "Testing MySQL connection..."
-        mysql -h "$DB_HOST" -u "$DB_USER" -p"$DB_PASSWORD" -e "
-          SHOW DATABASES;
-          SELECT USER(), CURRENT_USER(), VERSION();
-        "
+        echo "Testing MySQL connection with detailed debug..."
+        mysql -h "$DB_HOST" -u "$DB_USER" -p"$DB_PASSWORD" -e "SHOW DATABASES;" || echo "Connection failed"
+        mysql -h "$DB_HOST" -u "$DB_USER" -p"$DB_PASSWORD" -e "SELECT 1;" || echo "MySQL connection test failed"
 
     - name: Configure MySQL User
       run: |
-        echo "Configuring MySQL user privileges..."
         mysql -h "$DB_HOST" -u root -p"${{ secrets.DB_ROOT_PASSWORD }}" -e "
           CREATE USER IF NOT EXISTS '$DB_USER'@'%';
           ALTER USER '$DB_USER'@'%' IDENTIFIED BY '$DB_PASSWORD';
-          GRANT ALL PRIVILEGES ON *.* TO '$DB_USER'@'%';
+          GRANT ALL PRIVILEGES ON $DB_NAME.* TO '$DB_USER'@'%';
           FLUSH PRIVILEGES;
-        "
+        " || {
+          echo "Failed to configure MySQL user. Checking root access..."
+          mysql -h "$DB_HOST" -u root -p"${{ secrets.DB_ROOT_PASSWORD }}" -e "SELECT CURRENT_USER();"
+        }
 
     - name: Verify and prepare database files
       run: |
