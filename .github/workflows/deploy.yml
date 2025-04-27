@@ -5,9 +5,15 @@ on:
     branches: [main]
   workflow_dispatch:
 
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+    environment: production
 
     services:
       mysql:
@@ -39,10 +45,30 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.10'
+    - name: Debug Workflow Environment
+      run: |
+        echo "Current directory:"
+        pwd
+        echo "Listing files:"
+        ls -la
+
+    - name: Configure MySQL credentials
+      run: |
+        mkdir -p ~/.mysql
+        echo "[client]
+        user=$DB_USER
+        password=$DB_PASSWORD
+        host=$DB_HOST" > ~/.my.cnf
+        chmod 600 ~/.my.cnf
+
+    - name: Verify and prepare database files
+      run: |
+        if [ -f initialize.sql ]; then
+          cp initialize.sql database.sql
+        elif [ ! -f database.sql ]; then
+          echo "Error: Neither database.sql nor initialize.sql found."
+          exit 1
+        fi
 
     - name: Check MySQL Service Logs
       run: docker logs $(docker ps -q --filter "ancestor=mysql:8.0")
@@ -50,15 +76,10 @@ jobs:
     - name: Install MySQL Client
       run: |
         sudo apt-get update
-        sudo apt-get install -y mysql-client  # [[3]]
+        sudo apt-get install -y mysql-client
 
     - name: Debug MySQL Connection
-      run: |
-        mysqladmin ping -h $DB_HOST -u $DB_USER -p$DB_PASSWORD || echo "MySQL connection failed"
-
-    - name: Verify Database SQL File
-      run: |
-        if [ ! -f database.sql ]; then echo "database.sql not found"; exit 1; fi
+      run: mysqladmin ping || echo "MySQL connection failed"
 
     - name: Wait for MySQL service
       run: |
@@ -76,7 +97,8 @@ jobs:
 
     - name: Initialize database
       run: |
-        mysql -h $DB_HOST -u $DB_USER -p$DB_PASSWORD $DB_NAME < database.sql
+        mysql $DB_NAME < database.sql
+        python database.py
 
     - name: Run migrations
       run: |

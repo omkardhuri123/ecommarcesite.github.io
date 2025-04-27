@@ -3,19 +3,14 @@ import mysql.connector
 from mysql.connector import errorcode
 
 DB_CONFIG = {
-    'user': os.environ['DB_USER'],
-    'password': os.environ['DB_PASSWORD'],
     'host': os.environ.get('DB_HOST', '127.0.0.1'),
     'database': os.environ.get('DB_NAME', 'kokani_bazaar'),
+    'option_files': '~/.my.cnf'  # Use the credentials from .my.cnf
 }
 
-# Connect to MySQL
 try:
-    connection = mysql.connector.connect(
-        user=DB_CONFIG['user'],
-        password=DB_CONFIG['password'],
-        host=DB_CONFIG['host']
-    )
+    # Use option_files for credentials
+    connection = mysql.connector.connect(**DB_CONFIG)
     cursor = connection.cursor()
 
     # Initialize the database
