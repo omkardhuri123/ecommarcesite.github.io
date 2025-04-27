@@ -64,16 +64,47 @@ jobs:
         port=3306" > ~/.my.cnf
         chmod 600 ~/.my.cnf
 
-    - name: Debug MySQL Credentials
+    - name: Install MySQL Client
       run: |
+        sudo apt-get update
+        sudo apt-get install -y mysql-client
+
+    - name: Debug MySQL Setup
+      run: |
+        echo "Testing MySQL configuration..."
         echo "DB_USER: $DB_USER"
-        echo "DB_PASSWORD: $DB_PASSWORD"
         echo "DB_HOST: $DB_HOST"
         echo "DB_NAME: $DB_NAME"
+        docker ps
+        docker logs $(docker ps -q --filter "ancestor=mysql:8.0")
+
+    - name: Wait for MySQL
+      run: |
+        echo "Waiting for MySQL to be ready..."
+        timeout 60s bash -c '
+        until mysqladmin ping -h "$DB_HOST" -u "$DB_USER" -p"$DB_PASSWORD" --silent; do
+          echo "MySQL not ready - waiting..."
+          sleep 2
+        done
+        '
 
     - name: Test MySQL Connection
       run: |
-        mysql -h 127.0.0.1 -u $DB_USER -p$DB_PASSWORD -e "SHOW DATABASES;"
+        echo "Testing MySQL connection..."
+        mysql -h "$DB_HOST" -u "$DB_USER" -p"$DB_PASSWORD" -e "
+          SHOW DATABASES;
+          SELECT USER(), CURRENT_USER(), VERSION();
+        "
+
+    - name: Configure MySQL User
+      run: |
+        echo "Configuring MySQL user privileges..."
+        mysql -h "$DB_HOST" -u root -p"${{ secrets.DB_ROOT_PASSWORD }}" -e "
+          CREATE USER IF NOT EXISTS '$DB_USER'@'%';
+          ALTER USER '$DB_USER'@'%' IDENTIFIED BY '$DB_PASSWORD';
+          GRANT ALL PRIVILEGES ON *.* TO '$DB_USER'@'%';
+          FLUSH PRIVILEGES;
+        "
 
     - name: Verify and prepare database files
       run: |
@@ -83,33 +114,6 @@ jobs:
           echo "CREATE DATABASE IF NOT EXISTS $DB_NAME;" > database.sql
           echo "USE $DB_NAME;" >> database.sql
         fi
-
-    - name: Check MySQL Service Logs
-      run: docker logs $(docker ps -q --filter "ancestor=mysql:8.0")
-
-    - name: Install MySQL Client
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y mysql-client
-
-    - name: Debug MySQL Connection
-      run: mysqladmin ping || echo "MySQL connection failed"
-
-    - name: Wait for MySQL service
-      run: |
-        until mysqladmin ping -h $DB_HOST --silent; do
-          echo "Waiting for MySQL service..."
-          sleep 5
-        done
-
-    - name: Configure MySQL Privileges
-      run: |
-        mysql -h 127.0.0.1 -P 3306 -u root -p${{ secrets.DB_ROOT_PASSWORD }} -e "
-          CREATE USER IF NOT EXISTS '$DB_USER'@'%';
-          ALTER USER '$DB_USER'@'%' IDENTIFIED BY '$DB_PASSWORD';
-          GRANT ALL PRIVILEGES ON *.* TO '$DB_USER'@'%';
-          FLUSH PRIVILEGES;
-        "
 
     - name: Install dependencies
       run: |
