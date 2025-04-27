@@ -19,7 +19,7 @@ try:
     cursor = connection.cursor()
 
     # Initialize the database
-    with open('initialize.sql', 'r') as sql_file:
+    with open('database.sql', 'r') as sql_file:
         sql_commands = sql_file.read()
         for command in sql_commands.split(';'):
             if command.strip():
