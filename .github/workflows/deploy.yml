@@ -23,16 +23,14 @@ jobs:
           MYSQL_DATABASE: ${{ secrets.DB_NAME }}
           MYSQL_USER: ${{ secrets.DB_USER }}
           MYSQL_PASSWORD: ${{ secrets.DB_PASSWORD }}
-          MYSQL_HOST: 127.0.0.1
-          MYSQL_PORT: 3306
         ports:
           - 3306:3306
         options: >-
           --health-cmd="mysqladmin ping -h 127.0.0.1 --silent --connect-timeout=10"
           --health-interval=20s
           --health-timeout=10s
-          --health-retries=5
-          --health-start-period=30s
+          --health-retries=10
+          --health-start-period=60s
 
     env:
       FLASK_APP: app.py
@@ -78,6 +76,13 @@ jobs:
         docker ps
         docker logs $(docker ps -q --filter "ancestor=mysql:8.0")
 
+    - name: Debug MySQL Container
+      run: |
+        echo "MySQL Container Status:"
+        docker ps -a
+        echo "\nMySQL Container Logs:"
+        docker logs $(docker ps -q --filter "ancestor=mysql:8.0")
+
     - name: Wait for MySQL
       run: |
         echo "Waiting for MySQL to be ready..."
@@ -87,6 +92,18 @@ jobs:
           sleep 2
         done
         '
+
+    - name: Test MySQL Connection with Retry
+      run: |
+        for i in {1..10}; do
+          if mysqladmin ping -h "$DB_HOST" -u "$DB_USER" -p"$DB_PASSWORD" --silent; then
+            echo "MySQL connection successful on attempt $i"
+            break
+          else
+            echo "Attempt $i failed, retrying in 5 seconds..."
+            sleep 5
+          fi
+        done
 
     - name: Test MySQL Connection
       run: |
@@ -114,6 +131,13 @@ jobs:
           echo "CREATE DATABASE IF NOT EXISTS $DB_NAME;" > database.sql
           echo "USE $DB_NAME;" >> database.sql
         fi
+
+    - name: Debug Database Files
+      run: |
+        echo "Previewing database.sql:"
+        cat database.sql
+        echo "\nVerifying database.py exists:"
+        ls -l database.py
 
     - name: Install dependencies
       run: |
@@ -150,3 +174,4 @@ jobs:
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         publish_dir: ./build
+
