@@ -104,7 +104,9 @@ jobs:
     - name: Configure MySQL Privileges
       run: |
         mysql -h 127.0.0.1 -P 3306 -u root -p${{ secrets.DB_ROOT_PASSWORD }} -e "
-          GRANT ALL PRIVILEGES ON *.* TO '$DB_USER'@'%' IDENTIFIED BY '$DB_PASSWORD';
+          CREATE USER IF NOT EXISTS '$DB_USER'@'%';
+          ALTER USER '$DB_USER'@'%' IDENTIFIED BY '$DB_PASSWORD';
+          GRANT ALL PRIVILEGES ON *.* TO '$DB_USER'@'%';
           FLUSH PRIVILEGES;
         "
 
