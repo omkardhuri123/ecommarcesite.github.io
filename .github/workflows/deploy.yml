@@ -83,6 +83,15 @@ jobs:
         echo "\nMySQL Container Logs:"
         docker logs $(docker ps -q --filter "ancestor=mysql:8.0")
 
+    - name: Debug MySQL Environment
+      run: |
+        echo "Debugging MySQL environment..."
+        env | grep DB_
+        docker ps -a
+        docker logs $(docker ps -q --filter "ancestor=mysql:8.0")
+        echo "MySQL client version:"
+        mysql --version
+
     - name: Wait for MySQL
       run: |
         echo "Waiting for MySQL to be ready..."
@@ -123,22 +132,24 @@ jobs:
 
     - name: Configure MySQL User and Privileges
       run: |
-        if mysql -h "$DB_HOST" -u root -p"${{ secrets.DB_ROOT_PASSWORD }}" -e "SELECT VERSION();"; then
-          echo "MySQL connection established. Configuring user..."
-          mysql -h "$DB_HOST" -u root -p"${{ secrets.DB_ROOT_PASSWORD }}" -e "
-            CREATE USER IF NOT EXISTS '$DB_USER'@'%';
-            ALTER USER '$DB_USER'@'%' IDENTIFIED BY '$DB_PASSWORD';
-            GRANT ALL PRIVILEGES ON \`$DB_NAME\`.* TO '$DB_USER'@'%';
-            FLUSH PRIVILEGES;
-            SHOW GRANTS FOR '$DB_USER'@'%';
-          " || {
-            echo "MySQL configuration failed. Check root credentials."
-            exit 1
-          }
-        else
-          echo "MySQL connection failed. Verify DB_HOST and root password."
-          exit 1
-        fi
+        mysql -h "$DB_HOST" -u root -p"${{ secrets.DB_ROOT_PASSWORD }}" -e "
+          CREATE DATABASE IF NOT EXISTS \`${{ secrets.DB_NAME }}\`;
+          CREATE USER IF NOT EXISTS '${{ secrets.DB_USER }}'@'%';
+          ALTER USER '${{ secrets.DB_USER }}'@'%' IDENTIFIED BY '${{ secrets.DB_PASSWORD }}';
+          GRANT ALL PRIVILEGES ON \`${{ secrets.DB_NAME }}\`.* TO '${{ secrets.DB_USER }}'@'%';
+          FLUSH PRIVILEGES;
+          SHOW GRANTS FOR '${{ secrets.DB_USER }}'@'%';
+        " || {
+          echo "MySQL user configuration failed. Exiting...";
+          exit 1;
+        }
+
+    - name: Validate Database Schema
+      run: |
+        echo "Current database schema:"
+        cat database.sql
+        echo "\nVerifying database exists:"
+        mysql -h "$DB_HOST" -u "$DB_USER" -p"$DB_PASSWORD" -e "SHOW DATABASES;"
 
     - name: Verify User Access
       run: |
