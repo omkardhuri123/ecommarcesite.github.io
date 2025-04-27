@@ -23,10 +23,12 @@ jobs:
           MYSQL_DATABASE: ${{ secrets.DB_NAME }}
           MYSQL_USER: ${{ secrets.DB_USER }}
           MYSQL_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          MYSQL_HOST: 127.0.0.1
+          MYSQL_PORT: 3306
         ports:
           - 3306:3306
         options: >-
-          --health-cmd="mysqladmin ping"
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -u$MYSQL_USER -p$MYSQL_PASSWORD"
           --health-interval=10s
           --health-timeout=5s
           --health-retries=3
@@ -38,7 +40,7 @@ jobs:
       DB_USER: ${{ secrets.DB_USER }}
       DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
       DB_NAME: ${{ secrets.DB_NAME }}
-      DATABASE_URI: mysql+pymysql://${{ secrets.DB_USER }}:${{ secrets.DB_PASSWORD }}@127.0.0.1/${{ secrets.DB_NAME }}
+      DATABASE_URI: mysql+pymysql://${{ secrets.DB_USER }}:${{ secrets.DB_PASSWORD }}@127.0.0.1:3306/${{ secrets.DB_NAME }}
       SECRET_KEY: ${{ secrets.SECRET_KEY }}
 
     steps:
@@ -54,11 +56,11 @@ jobs:
 
     - name: Configure MySQL credentials
       run: |
-        mkdir -p ~/.mysql
         echo "[client]
         user=$DB_USER
         password=$DB_PASSWORD
-        host=$DB_HOST" > ~/.my.cnf
+        host=127.0.0.1
+        port=3306" > ~/.my.cnf
         chmod 600 ~/.my.cnf
 
     - name: Verify and prepare database files
@@ -97,7 +99,7 @@ jobs:
 
     - name: Initialize database
       run: |
-        mysql $DB_NAME < database.sql
+        mysql -h 127.0.0.1 -P 3306 -u $DB_USER -p$DB_PASSWORD $DB_NAME < database.sql
         python database.py
 
     - name: Run migrations

@@ -3,10 +3,11 @@ import mysql.connector
 from mysql.connector import errorcode
 
 DB_CONFIG = {
-    'host': os.environ.get('DB_HOST', '127.0.0.1'),
-    'user': os.environ.get('DB_USER'),
-    'password': os.environ.get('DB_PASSWORD'),
-    'database': os.environ.get('DB_NAME', 'kokani_bazaar')
+    'host': '127.0.0.1',
+    'port': 3306,
+    'user': os.environ['DB_USER'],
+    'password': os.environ['DB_PASSWORD'],
+    'database': os.environ['DB_NAME']
 }
 
 connection = None
