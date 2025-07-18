@@ -6,7 +6,6 @@ from forms import LoginForm, RegisterForm, ProductForm, CategoryForm, CheckoutFo
 import logging
 from sqlalchemy import or_
 
-app.secret_key = 'your_secret_key'  # Required for session management
 
 @app.route('/')
 def index():
@@ -82,7 +81,7 @@ def cart():
     for product in products:
         product.total = product.price * cart_items.get(str(product.id), 0)
     
-    total_cart_value = sum(product.total for product in products)
+    total_cart_value = sum(product.total for product in valid_products)
     
     return render_template('cart.html', 
                           products=valid_products, 
@@ -328,12 +327,12 @@ def add_to_wishlist(product_id):
     product = Product.query.get_or_404(product_id)
     
     # Initialize wishlist in session if needed
-    if 'wishlist' not in session:
-        session['wishlist'] = []
-    
-    # Add product if not already present
-    if product_id not in session['wishlist']:
-        session['wishlist'].append(product_id)
+    wishlist = session.get('wishlist', [])
+    # Ensure all IDs are integers
+    wishlist = [int(pid) for pid in wishlist]
+    if int(product_id) not in wishlist:
+        wishlist.append(int(product_id))
+        session['wishlist'] = wishlist
         session.modified = True  # Mark session as modified
     
     return redirect(url_for('wishlist'))
@@ -347,8 +346,11 @@ def wishlist():
 
 @app.route('/remove-from-wishlist/<int:product_id>', methods=['POST'])
 def remove_from_wishlist(product_id):
-    if 'wishlist' in session and product_id in session['wishlist']:
-        session['wishlist'].remove(product_id)
+    wishlist = session.get('wishlist', [])
+    wishlist = [int(pid) for pid in wishlist]
+    if int(product_id) in wishlist:
+        wishlist.remove(int(product_id))
+        session['wishlist'] = wishlist
         session.modified = True
     flash('Product removed from wishlist', 'info')
     return redirect(url_for('wishlist'))
