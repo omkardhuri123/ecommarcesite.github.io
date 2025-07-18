@@ -98,7 +98,6 @@
                 <div class="flex flex-col space-y-4">
                     <!-- Add to Cart Form -->
                     <form action="{{ url_for('add_to_cart', product_id=product.id) }}" method="POST">
-                        <!-- {{ csrf_token() }}  ADD THIS LINE -->
                         {{ form.hidden_tag() }}
                         <div class="flex items-center">
                             <div class="flex items-center border rounded-md mr-4">
@@ -119,7 +118,6 @@
 
                     <!-- Add to Wishlist Form -->
                     <form action="{{ url_for('add_to_wishlist', product_id=product.id) }}" method="POST">
-                        <!-- {{ csrf_token() }}  -->
                         {{ form.hidden_tag() }}
                         <button type="submit" class="border border-garden-600 text-garden-600 hover:bg-garden-50 px-6 py-3 rounded-md font-medium flex items-center justify-center w-full">
                             <i data-lucide="heart" class="h-5 w-5 mr-2"></i>

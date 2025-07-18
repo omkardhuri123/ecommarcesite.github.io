@@ -52,6 +52,7 @@ app.config['DEBUG'] = os.getenv('FLASK_DEBUG', '0') == '1'
 # --- Initialize Extensions ---
 csrf = CSRFProtect(app)
 init_extensions(app)
+freezer.init_app(app)
 
 # --- Routes ---
 from routes import *

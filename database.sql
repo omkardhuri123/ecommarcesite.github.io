@@ -153,28 +153,6 @@ CREATE TABLE `user` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Table structure for table `users`
---
-
-CREATE TABLE users (
-    id INTEGER PRIMARY KEY AUTO_INCREMENT,
-    username VARCHAR(255) NOT NULL UNIQUE,
-    password TEXT NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
---
--- Table structure for table `posts`
---
-
-CREATE TABLE posts (
-    id INTEGER PRIMARY KEY AUTO_INCREMENT,
-    user_id INTEGER,
-    title TEXT NOT NULL,
-    content TEXT NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES users(id)
-);
 
 --
 -- Dumping events for database 'kokani_bazaar'

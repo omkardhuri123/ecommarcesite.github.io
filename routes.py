@@ -6,7 +6,10 @@ from forms import LoginForm, RegisterForm, ProductForm, CategoryForm, CheckoutFo
 import logging
 from sqlalchemy import or_
 
-app.secret_key = 'your_secret_key'  # Required for session management
+@app.context_processor
+def inject_cart_count():
+    cart = session.get('cart', {})
+    return dict(cart_count=sum(cart.values()))
 
 @app.route('/')
 def index():
@@ -59,7 +62,11 @@ def shop():
 @app.route('/product/<int:id>')
 def product_detail(id):
     product = Product.query.get_or_404(id)
-    related_products = Product.query.filter_by(category_id=product.category_id).filter(Product.id != id).limit(4).all()
+    related_products = (Product.query
+                        .filter_by(category_id=product.category_id)
+                        .filter(Product.id != id)
+                        .limit(4)
+                        .all())
     add_to_cart_form = AddToCartForm()
     return render_template('product_detail.html', product=product, related_products=related_products, form=add_to_cart_form)
 
@@ -91,10 +98,10 @@ def cart():
 
 @app.route('/add-to-cart/<int:product_id>', methods=['POST'])
 def add_to_cart(product_id):
-    form = CartForm()
+    form = AddToCartForm()
     if form.validate_on_submit():
         product = Product.query.get_or_404(product_id)
-        quantity = int(request.form.get('quantity', 1))
+        quantity = form.quantity.data
         
         if product.stock < 1:
             flash('Product is out of stock')
@@ -112,7 +119,7 @@ def add_to_cart(product_id):
         session.modified = True
         
         return redirect(url_for('cart'))
-    return redirect(url_for('cart'))
+    return redirect(url_for('product_detail', id=product_id))
 
 @app.route('/update-cart/<int:product_id>/<action>', methods=['POST'])
 def update_cart(product_id, action):
@@ -136,7 +143,6 @@ def update_cart(product_id, action):
         session['cart'][str(product.id)] = new_quantity
         session.modified = True
         
-        return redirect(url_for('cart'))
     return redirect(url_for('cart'))
 
 @app.route('/remove-from-cart/<int:product_id>', methods=['POST'])
@@ -146,7 +152,6 @@ def remove_from_cart(product_id):
         if 'cart' in session and str(product_id) in session['cart']:
             del session['cart'][str(product_id)]
             session.modified = True
-        return redirect(url_for('cart'))
     return redirect(url_for('cart'))
 
 @app.route('/clear-cart', methods=['POST'])
@@ -154,7 +159,6 @@ def clear_cart():
     form = CartForm()
     if form.validate_on_submit():
         session.pop('cart', None)
-        return redirect(url_for('cart'))
     return redirect(url_for('cart'))
 
 @app.route('/checkout', methods=['GET', 'POST'])
@@ -364,3 +368,14 @@ def account():
         return redirect(url_for('logout'))
     
     return render_template('myaccount.html', user=user)
+
+@app.route('/my-orders')
+def my_orders():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+
+    user = User.query.get(session['user_id'])
+    if not user:
+        return redirect(url_for('logout'))
+
+    return render_template('my_orders.html', orders=user.orders)

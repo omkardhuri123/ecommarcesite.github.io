@@ -16,7 +16,7 @@
                             <h2 class="text-xl font-semibold">Shopping Cart ({{ products|length }} items)</h2>
                             <!-- Clear Cart Form -->
                             <form action="{{ url_for('clear_cart') }}" method="POST">
-                                {{ form.hidden_tag() }}  <!-- CSRF TOKEN ADDED -->
+                                {{ form.hidden_tag() }}
                                 <button type="submit" class="text-gray-500 hover:text-red-500 flex items-center text-sm">
                                     <i data-lucide="trash-2" class="h-4 w-4 mr-1"></i>
                                     Clear Cart
@@ -55,7 +55,7 @@
                                     <div class="flex items-center border rounded-md">
                                         <!-- Decrease Quantity Form -->
                                         <form action="{{ url_for('update_cart', product_id=product.id, action='decrease') }}" method="POST" class="inline">
-                                            {{ form.hidden_tag() }}  <!-- CSRF TOKEN ADDED -->
+                                            {{ form.hidden_tag() }}
                                             <button type="submit" class="h-8 px-2 text-gray-600">
                                                 <i data-lucide="minus" class="h-3 w-3"></i>
                                             </button>
@@ -63,7 +63,7 @@
                                         <span class="w-10 text-center text-sm">{{ session['cart'][product.id|string] }}</span>
                                         <!-- Increase Quantity Form -->
                                         <form action="{{ url_for('update_cart', product_id=product.id, action='increase') }}" method="POST" class="inline">
-                                            {{ form.hidden_tag() }}  <!-- CSRF TOKEN ADDED -->
+                                            {{ form.hidden_tag() }}
                                             <button type="submit" class="h-8 px-2 text-gray-600">
                                                 <i data-lucide="plus" class="h-3 w-3"></i>
                                             </button>
@@ -72,7 +72,7 @@
                                     
                                     <!-- Remove Item Form -->
                                     <form action="{{ url_for('remove_from_cart', product_id=product.id) }}" method="POST" class="inline">
-                                        {{ form.hidden_tag() }}  <!-- CSRF TOKEN ADDED -->
+                                        {{ form.hidden_tag() }}
                                         <button type="submit" class="text-gray-500 hover:text-red-500">
                                             <i data-lucide="trash-2" class="h-4 w-4"></i>
                                         </button>
