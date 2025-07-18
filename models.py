@@ -10,6 +10,21 @@ class User(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     orders = db.relationship('Order', backref='customer', lazy=True)
     
+    @property
+    def address(self):
+        if self.orders:
+            latest_order = sorted(self.orders, key=lambda o: o.created_at, reverse=True)[0]
+            return {
+                "first_name": latest_order.first_name,
+                "last_name": latest_order.last_name,
+                "address": latest_order.address,
+                "city": latest_order.city,
+                "state": latest_order.state,
+                "zip": latest_order.zip,
+                "country": latest_order.country,
+            }
+        return None
+
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
         

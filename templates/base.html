@@ -41,7 +41,9 @@
                     <!-- Cart Icon -->
                     <a href="{{ url_for('cart') }}" class="relative text-gray-600 hover:text-garden-600">
                         <i data-lucide="shopping-cart" class="h-6 w-6"></i>
-                        <span class="absolute -top-1 -right-1 bg-garden-600 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center">0</span> <!-- TODO: Dynamic cart count -->
+                        {% if cart_count > 0 %}
+                        <span class="absolute -top-1 -right-1 bg-garden-600 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center">{{ cart_count }}</span>
+                        {% endif %}
                     </a>
 
                     <!-- User Menu / Login Icon -->
@@ -53,7 +55,7 @@
                             </button>
                             <div id="user-menu-dropdown" class="absolute right-0 z-10 mt-2 w-48 bg-white rounded-md shadow-lg py-1 hidden">
                                 <a href="{{ url_for('account') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">My Account</a>
-                                <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">My Orders</a>
+                                <a href="{{ url_for('my_orders') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">My Orders</a>
                                 <a href="{{ url_for('logout') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Logout</a>
                             </div>
                         </div>
